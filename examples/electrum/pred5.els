@@ -1,0 +1,24 @@
+
+sig A {
+		r : A 
+}
+
+sig B extends A {
+		s : A
+}
+
+
+pred p1 { r.r in r }
+run p1
+
+pred p2 { ~~r in r }
+run p2
+
+pred p3 { s.s in s }
+run p3
+
+pred p4 { ~~s in r }
+run p4
+
+pred p5 { *s in ^s + iden }
+run p5

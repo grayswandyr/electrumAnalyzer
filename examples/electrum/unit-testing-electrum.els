@@ -1,0 +1,29 @@
+
+sig C {}
+
+sig L {
+		var from : lone C,
+		var to : set C
+}
+/*
+pred p1 { sometime some to }
+run p1
+
+pred p2 { always some to }
+run p2
+
+pred p3 { always all l : L | (some l.from implies sometime some l.to) }
+run p3
+
+pred p4 { some l : L, c : C | (l.to)' = l.to + c }
+run p4
+
+pred p5 { some l : L, c : C | l.(to') = l.to + c }
+run p5
+
+pred p6 { after some to }
+run p6
+*/
+assert p7 { always { all l : L | some l.to => l.to' = (l.to)' } }
+check p7
+check p7 for 6

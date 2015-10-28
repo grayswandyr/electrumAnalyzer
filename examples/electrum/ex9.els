@@ -1,0 +1,8 @@
+
+sig A, B, C {}
+
+sig D, E extends A {}
+
+fact {
+		C in D + E
+}pred pqr { univ in univ } run pqr

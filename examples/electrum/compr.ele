@@ -1,0 +1,9 @@
+sig A {
+		r : set A,
+}
+
+fact test {
+		always some { v0 : A, v1 : v0.r, v2 : v1.r | some v2.r }
+}
+run {}
+

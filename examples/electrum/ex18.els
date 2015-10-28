@@ -1,0 +1,9 @@
+sig A {}
+
+sig B {
+		r : one A
+}
+
+pred p { univ in univ }
+
+run p

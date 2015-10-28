@@ -1,0 +1,11 @@
+sig A {
+    r: B,
+    r2 : B ->  C 
+}
+
+sig B {}
+sig C {}
+
+assert testass {some A}
+
+check testass

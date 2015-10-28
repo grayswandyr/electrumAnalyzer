@@ -1,0 +1,6 @@
+sig A {}
+sig B {}
+sig D in A + B {}
+pred pqr[] { univ in univ }
+run pqr
+

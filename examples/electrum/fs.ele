@@ -1,0 +1,17 @@
+
+abstract sig Object {}
+sig File extends Object {}
+sig Dir extends Object { contents : set Object }
+one sig Root extends Dir {}
+fact { Object in Root.*contents }
+
+assert SomeDir { all o : Object - Root | some contents.o }
+check SomeDir // valid
+
+assert FileInDir { all f : File | some contents.f }
+check FileInDir // valid
+
+assert RootTop { no o : Object | Root in o.contents }
+check RootTop // produces a counterexample
+
+run {} 

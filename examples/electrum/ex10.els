@@ -1,0 +1,6 @@
+var sig A {}
+//sig B {}
+pred p3 {  always ( some A  iff (no A')) }
+//pred p4 {  always ( some B  iff (no B')) }
+run p3
+//run p4

@@ -1,0 +1,5 @@
+abstract sig Lamp {}
+
+var sig On, Off extends Lamp {}
+
+check { always all l : Lamp | l in On or l in Off }

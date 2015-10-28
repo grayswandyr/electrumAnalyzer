@@ -1,0 +1,13 @@
+sig D {
+		e : E
+}
+
+sig E {
+		d : D
+}
+
+fact {
+		 d.e.d = d
+		 e.d.e = e
+		 some { d1 : D, e1 : E | d1->e1 in D->E }
+}pred pqr { univ in univ } run pqr

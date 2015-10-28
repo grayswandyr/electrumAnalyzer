@@ -1,0 +1,11 @@
+
+sig A { r : A  }
+sig B, C extends A {}
+
+pred p [] {
+
+	all x : B, y : B + C | x->y in r
+
+}
+
+run p 

@@ -1,0 +1,8 @@
+read_model
+flatten_hierarchy
+build_flat_model
+encode_variables
+build_boolean_model
+bmc_setup
+check_ltlspec_bmc
+quit -x

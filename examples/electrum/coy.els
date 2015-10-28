@@ -1,0 +1,58 @@
+module altaricoy2
+
+abstract sig State {}
+
+abstract sig Value {}
+
+abstract sig Port {
+	possibleValues : set Value,
+	var val : possibleValues,
+	to : set Port	// only for nicer display, no real need for this relation
+} {
+	all p : Port | p in to iff { 
+						(some n : CompositeNode | this->p in n.conns) 
+						or (some n : LeafNode | this in n.input and p in n.output) 
+					}
+
+}
+
+abstract sig IPort, OPort extends Port {}
+
+abstract sig AbstractNode {
+	input : set IPort,
+	output : set OPort,
+} 
+
+fact {
+	all disj n1, n2 : AbstractNode {
+		no n1.input & n2.input
+		no n1.output & n2.output
+	}
+}
+
+abstract sig CompositeNode extends AbstractNode {
+	subs : some AbstractNode,
+	conns : subs.@output -> subs.@input + input -> subs.@input + subs.@output -> output,
+} { 
+	//multiplicity of conns
+	all p1: subs.@output | 
+		(some p2 : subs.@input | p1->p2 in conns) or (lone p2:output | p1->p2 in conns)
+	all p2: subs.@input | 
+		(some p1 : subs.@output | p1->p2 in conns) or (lone p1:input | p1->p2 in conns)	
+	// no directly-looping connections
+	all op : OPort, ip : IPort | op->ip in conns implies @output.op != @input.ip
+	// at most one parent
+	@subs in CompositeNode lone -> some AbstractNode
+	// subs acyclic
+	no ^@subs & iden 
+	// connected ports always carry the same value
+	always { all  po, pi : Port |
+		po->pi in conns implies po.val = pi.val }
+}
+
+abstract sig LeafNode extends AbstractNode {
+	possibleStates : some State,
+	var state : possibleStates,
+} { 
+	some input + output 
+}

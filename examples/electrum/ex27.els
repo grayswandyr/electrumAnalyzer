@@ -1,0 +1,30 @@
+//open util/ordering[A] as aa
+
+sig A {
+    r: B -> B,
+    var r2 : B,
+    r3 : A->A ->A,
+}
+sig B extends A{}
+
+sig C {
+    rc : A}
+
+fact {
+     all a, b,c,d : univ | a->b ->c -> d in r3  
+}
+ 
+//assert assjoin {
+//       some a:A | all b:B | b in a.r2
+//}
+
+fun f1[x:A] : set B {x.r2}
+fun g [a:A, b:B] : B{b.(a.r)}
+assert test_fun {
+      all a: A | some b: B | f1[a] = g[a,b]
+}
+
+check test_fun
+
+//check assjoin
+

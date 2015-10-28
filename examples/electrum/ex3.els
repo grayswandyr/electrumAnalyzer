@@ -1,0 +1,25 @@
+
+sig A {}
+
+sig B {
+r : set A 
+}
+
+pred t1 { 
+always (all b:B | some a:A | a=(b.r)')
+}
+
+pred t2 { 
+always (all b:B | some a:A | (b.r)'=a)
+}
+
+
+pred verif{
+always (all b:B | one a:A | a in (b.r)')
+}
+
+
+check {t1 => verif}
+check {t2 => verif}
+
+

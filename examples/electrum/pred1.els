@@ -1,0 +1,12 @@
+
+sig A {
+  r:A,
+}
+
+
+
+fact test {
+some {x:A, y:A | some y.r}
+}
+
+run {}

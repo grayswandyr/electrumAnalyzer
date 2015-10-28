@@ -1,0 +1,4 @@
+sig A {}
+
+sig B in A {}
+pred pqr { univ in univ } run pqr

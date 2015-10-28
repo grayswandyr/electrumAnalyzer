@@ -1,0 +1,4 @@
+
+var sig A {}
+
+sig B, C extends A {}pred pqr { univ in univ } run pqr

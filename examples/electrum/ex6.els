@@ -1,0 +1,8 @@
+sig B{}
+
+sig A {
+rb : B,
+ra : A
+}
+pred p37 { all a: A | some ra ++ a->a }
+run p37

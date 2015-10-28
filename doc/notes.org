@@ -1,0 +1,41 @@
+# Time-stamp: <2015-01-23 CET 17:39:13 David Chemouil>
+# 
+# Electrum Analyzer 
+# Copyright (C) 2014-2015 Onera
+# Authors: 
+#   David Chemouil <david DOT chemouil AT onera DOT fr>
+# 
+# This file is part of the Electrum Analyzer.
+
+* Notes about the Electrum language and the Electrum Analyzer
+
+** Syntax
+	 
+*** Differences with Alloy
+		The syntax is strongly influenced by that of Alloy 4.2. However,
+		we get rid of a few peculiarities (sometimes due to backward
+		compatibility constraints):
+		- No "receiver syntax" à la C++ for predicates and functions. That
+      is, the syntax 'pred S.p [...] {...}' (which is syntactic sugar
+      for 'pred p [this: S, ...] {...}') for a given signature S is
+      not allowed.
+		- The Alloy keyword "private" is allowed but ignored.
+		- Application and "box join" are only possible with square
+      brackets (not parentheses), as in current Alloy.
+		- The use of sequences ('seq') is allowed in the syntax (e.g. to
+      pretty-print it) but yields a semantic error.
+		- The keyword "exactly" is allowed in formal parameters of a
+      generic module but may be ignored.
+		- IMPORTANT: The quote is reserved and cannot be part of an identifier,
+      contrary to Alloy! Beware, as many Alloy models use this symbol.
+   		- When opening modules, only one way to speak of objects inside :
+	      * without prefix if no alias
+	      * with prefix if alias
+	      * prefix of full module name is used only if module not opened
+		-If A is a predicate, we can no longer use the syntax n.A[m] for A[n,m]
+		- no overloading, in particular the first field of a relation is in a unique signature
+
+
+      
+
+

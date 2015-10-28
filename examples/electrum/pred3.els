@@ -1,0 +1,9 @@
+sig C {}
+
+pred p [] {
+
+	all x, y : C | x->y in univ->univ
+
+}
+
+run p 

@@ -1,0 +1,4 @@
+
+sig C {}
+pred p [r : C -> C] { r.r in r }
+run p

@@ -1,0 +1,31 @@
+
+sig A { }
+sig A2 {}
+sig B, C extends A {}
+
+sig D, E in A {}
+
+var sig F,G extends D {}
+
+sig H in C {}
+
+sig I extends H {}
+
+fact {
+     all x : univ | x in A2 or x in F
+} 
+
+assert toto {
+       all x : univ | x in A2 or x in D
+}
+
+assert tata {
+       some x : A | x in A
+}
+
+check toto for 4
+
+check tata
+ 
+pred titi {no I  }
+run titi for 2

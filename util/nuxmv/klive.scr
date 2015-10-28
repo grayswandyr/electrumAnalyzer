@@ -1,0 +1,7 @@
+set default_trace_plugin 0;
+set traces_hiding_prefix '_#';
+read_model; 
+go_msat; 
+build_boolean_model; 
+check_ltlspec_klive; 
+quit

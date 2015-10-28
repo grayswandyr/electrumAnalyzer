@@ -1,0 +1,10 @@
+
+var sig A {}
+
+sig B {
+		a : A // means a : one A
+} 
+
+sig C { // handle 2 disj's
+		disj b1, b2 : disj set B
+}pred pqr { univ in univ } run pqr

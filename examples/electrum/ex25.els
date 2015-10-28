@@ -1,0 +1,9 @@
+sig A {}
+one sig Or {
+    first : A,
+}
+
+fact {all a: A | a in Or.first}
+
+pred p{}
+run p

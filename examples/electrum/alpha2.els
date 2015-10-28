@@ -1,0 +1,21 @@
+module M[X, Y,Z]
+
+open util/ordering[X]
+open util/graph[K]
+
+sig K, M {}
+
+pred p[x : K] {
+     some a : x | some a
+     some x : x | some x
+     some x : x, x: x | some x: x | some x
+     some k, g, k : K, m : k  | k != x
+     some k, g : K, m : M | some k : K  | k != x
+     some { k : K | k != x }
+     let x = x | some x
+     let x = x, y = x, x = x | some x && some y
+}
+
+pred q { some k : K | p [k] }
+
+run q for 1 but exactly 1 K

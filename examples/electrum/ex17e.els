@@ -1,0 +1,9 @@
+
+sig A extends A1 { s : set (A + B), r : s}
+sig B extends A {}
+sig A1, E {}
+
+pred p { all e : A1 | e->e in r }
+
+run p
+pred pqr { univ in univ } run pqr

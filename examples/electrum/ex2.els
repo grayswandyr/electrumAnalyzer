@@ -1,0 +1,7 @@
+sig A {}
+
+sig B{}
+
+fact { #A = #B}
+
+run {}

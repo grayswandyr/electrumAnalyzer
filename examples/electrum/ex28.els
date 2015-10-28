@@ -1,0 +1,21 @@
+one sig A { 
+    r1 :  B,
+}
+
+sig B {
+    }
+
+lone sig C {
+     rc : A}
+
+fact {
+     all x: A | all y : B | y not in x.r1
+}
+
+fact {
+     all c: C |some a: A |c.rc = a
+}
+assert test_tc { no x:A | all y: B | y in x.r1 }
+
+check test_tc for 5
+

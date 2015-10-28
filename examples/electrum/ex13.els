@@ -1,0 +1,11 @@
+sig A { r : B}
+
+sig B {}
+
+
+
+
+pred p {}
+
+run p
+pred pqr { univ in univ } run pqr

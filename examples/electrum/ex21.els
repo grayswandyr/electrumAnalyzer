@@ -1,0 +1,9 @@
+sig A {}
+
+sig B { r : B }
+
+pred p {
+  some { a: A, b : B | b->b in r }
+}
+
+run p

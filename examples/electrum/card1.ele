@@ -1,0 +1,8 @@
+sig A {
+	r : set A 
+} {
+	#r = 2
+}
+
+check { #r <= 8 } for 4
+

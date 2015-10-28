@@ -1,0 +1,9 @@
+sig A { r : B }
+
+sig B {}
+
+pred p {
+		 all a : A | lone a.r
+}
+
+run p

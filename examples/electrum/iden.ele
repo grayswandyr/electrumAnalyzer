@@ -1,0 +1,4 @@
+var sig A { s : set A }
+
+run { s in iden }
+

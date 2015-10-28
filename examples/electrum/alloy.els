@@ -1,0 +1,126 @@
+sig A {
+		rb : B,
+		ra : A
+}
+sig B { from : A }
+/*
+pred p1 { let ra2 = ra.ra | some ra2 }
+run p1
+
+pred p2 { let ra2 = ra.ra | let ra2 = ra.ra.ra | some ra2 }
+run p2
+
+pred p3 { let rb = ra.ra | some rb }
+run p3
+
+pred p4 { all a : A, b : B | a->b in rb iff b->a in from }
+run p4
+
+assert p5 { some a : A, b : B | a->b in rb iff b->a in from }
+check p5 for 5
+
+pred p6 { one a : A, b : B | a->b in rb iff b->a in from }
+run p6
+
+pred p7 { lone a : A, b : B | a->b in rb iff b->a in from }
+run p7 
+
+pred p8 { no a : A, b : B | a->b in rb iff b->a in from }
+run p8
+
+pred p9 { (all a : A | a->a in ra) iff (not some a : A | a->a not in ra) }
+run p9
+
+pred p10 { not not not not p1 }
+run p10
+
+pred p11 { some rb some from }
+run p11
+
+pred p12 { lone from }
+run p12
+
+pred p13 { some from }
+run p13
+
+pred p14 { one from }
+run p14
+
+pred p15 { some from and lone from iff one from }
+run p15
+
+pred p16 { no from }
+run p16
+
+pred p17 { ^^ra = ^ra }
+run p17
+
+pred p18 { iden in ra }
+run p18
+
+pred p19 { A <: iden in ra }
+run p19
+
+pred p20 { A <: iden :> A in ra }
+run p20
+
+pred p21 { rb = ~from }
+run p21
+
+pred p22 { rb = ~~~from }
+run p22
+
+pred p23 { A in A }
+run p23
+
+pred p24 { ra in ra }
+run p24
+
+pred p25 { univ in univ }
+run p25
+
+pred p26 { A = A or rb = ~from }
+run p26
+
+pred p27 { rb = ~from or A = A }
+run p27
+
+pred p28 { rb = ~from and A = A }
+run p28
+
+pred p29 { rb = ~from implies A = A }
+run p29
+
+pred p30 { A = A implies rb = ~from}
+run p30
+
+pred p31 { A != A implies rb = ~from}
+run p31
+
+pred p32 { ra in ra iff ra not in ra }
+run p32
+
+pred p33 { (ra in ra iff ra in ra) iff (ra in ra)}
+run p33
+
+pred p34 { rb in ~from implies ra.ra in ra else ra.ra.ra in ra }
+run p34
+
+pred p35 { some from + ~rb }
+run p35
+
+pred p36 { some from & ~rb }
+run p36
+*/
+pred p37 { all a: A | some ra ++ a->a }
+run p37
+/*
+pred p38 { all disj a1, a2 : A | a1->a2 in ra }
+run p38
+
+pred p39 [a : A] { a->a in ra }
+run p39
+
+pred p40 { all b : B | b.from in A}
+run p40
+*/

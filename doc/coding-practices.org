@@ -1,0 +1,41 @@
+# Time-stamp: <2015-02-20 CET 09:39:47 David Chemouil>
+# 
+# Electrum Analyzer 
+# Copyright (C) 2014-2015 Onera
+# Authors: 
+#   David Chemouil <david DOT chemouil AT onera DOT fr>
+# 
+# This file is part of the Electrum Analyzer.
+
+# This document contains suggestions for best practices to be enforced
+# as much as possible when coding the Electrum Analyzer. Exceptions may
+# appear of course but should be duly justified.
+
+* Error management
+
+** For impossible cases that the compiler cannot detect, use 'assert false'
+	 (raises Assert_failure).
+	 E.g. when pattern-matching a list that cannot be empty, write case
+	 '| [] -> assert false'.
+	 
+** When a precondition on a parameter must have been checked at call site,
+	 use 'verify_arg' (raises Invalid_argument).
+	 E.g., in the following, the function contract is that num >= 0:
+  	 let make_scope_for_but ~num ~typescopes =
+       verify_arg (num >= 0) "negative scope in 'for ... but ...' command";
+		   ForBut (num, typescopes)
+
+** To handle exceptional cases, preferably use the 'faulty' type defined in
+	 'src/common/faulty.mli', which is based upon the Batteries.result type.
+	 The Bad case of this type contains a polymorphic variant to stand for the
+	 "exception" and a suspended string as an accompanying error message.
+	 Advantages:
+	 - The polymorphic variants can be defined locally and just at the time they
+		 are used.
+		 E.g.: fail `My_error (lazy "my error message")
+	 - They will nonetheless appear in the inferred type of the faulty expression,
+		 the developer cannot ignore them.
+		 E.g.: the previous expression has type: ('a, _[> `My_error ]) faulty
+	 - Result.t is a monad so faulty expressions can be composed.
+
+
