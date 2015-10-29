@@ -1,10 +1,10 @@
 (*****************************************************************************
- * Time-stamp: <2015-07-28 CEST 17:23:39 David Chemouil>
+ * Time-stamp: <2015-10-29 CET 09:41:27 David Chemouil>
  *
  * Electrum Analyzer 
- * Copyright (C) 2014-2015 Onera
+ * Copyright (C) 2014-2015 Onera; (C) 2015 IRIT
  * Authors: 
- *   
+ *   David Chemouil <david DOT chemouil AT onera DOT fr>
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -115,7 +115,7 @@ let run verbosity prettyprint inclpath infile outfile =
 
     Printf.printf
       "%s v%s (build: %s).\n\
-       Copyright (c) 2014-2015 Onera.\n\
+       Copyright (c) 2014-2015 Onera, (c) 2015 IRIT.\n\
        Released under the GNU GPL 3.0 or later WITHOUT ANY WARRANTY.\n\
        The %s relies on third-party free software.\n\
        Please use the --help option for more information.\n%!"
@@ -210,7 +210,7 @@ let main_info =
               `P "Report issues at \
                   <https://forge.onera.fr/projects/electrum/issues/new>.";
               `S "COPYRIGHT";
-              `P "Electrum Analyzer (c) 2014-2015 Onera";
+              `P "Electrum Analyzer (c) 2014-2015 Onera, (c) 2015 IRIT";
               `P "The Electrum Analyzer is free software: you can redistribute \
                   it and/or modify it under the terms of the GNU General \
                   Public License as published by the Free Software Foundation, \

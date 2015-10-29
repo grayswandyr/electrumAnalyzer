@@ -1,8 +1,8 @@
 (*******************************************************************************
- * Time-stamp: <2015-09-09 CEST 15:20:23 David Chemouil>
+ * Time-stamp: <2015-10-29 CET 09:40:19 David Chemouil>
  * 
  * Electrum Analyzer 
- * Copyright (C) 2014-2015 Onera
+ * Copyright (C) 2014-2015 Onera, (C) 2015 IRIT
  * Authors: 
  *   Denis Kuperberg <denis DOT kuperberg AT gmail DOT com>
  *   David Chemouil <david DOT chemouil AT onera DOT fr>

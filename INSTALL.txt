@@ -1,7 +1,7 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 6c1d057df7de9f4e5dc26ca1fec34f66) *)
+(* DO NOT EDIT (digest: ccc1c584f5ebda459d1f95e4c0521d08) *)
 
-This is the INSTALL file for the electrum-analyzer distribution.
+This is the INSTALL file for the Electrum Analyzer distribution.
 
 This package uses OASIS to generate its build system. See section OASIS for
 full information.

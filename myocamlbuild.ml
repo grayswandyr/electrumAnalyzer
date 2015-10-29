@@ -665,4 +665,24 @@ let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
 # 667 "myocamlbuild.ml"
 (* OASIS_STOP *)
+let () = dispatch (function
+  | After_rules ->
+     rule "version file"
+          ~prod:"version.ml"
+          ~doc:"generate a file with version information:
+                Version.commit is the HEAD commit at the time of building,
+                Version.tag is the name of the last git tag"
+          (fun _env _build ->
+           let trim = "tr -d '\r\n'" in
+           let commit = run_and_read ("git rev-parse HEAD |" ^ trim) in
+           let tag = run_and_read ("git describe --abbrev=0 --tags |" ^ trim) in
+           let code = Printf.sprintf
+                        "let commit = %S\n\
+                         let tag = %S\n"
+                        commit tag in
+           print_endline "TOTO";
+           Echo ([code], "version.ml");
+          )
+  | _ -> ()
+);;
 Ocamlbuild_plugin.dispatch dispatch_default;;

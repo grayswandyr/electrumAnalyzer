@@ -1,14 +1,16 @@
 Version:0.3
 
 OASISFormat: 0.4 
-Name: electrum-analyzer
+Name: Electrum Analyzer
 Synopsis: Formal analysis for the Electrum formal specification language
 Authors:
   David Chemouil,
   Julien Brunel,
   Denis Kuperberg
 Maintainers: david.chemouil+electrum@onera.fr
-Copyrights: (C) 2014-2015 Onera
+Copyrights: 
+  (c) 2014-2015 Onera
+  (c) 2015 IRIT
 License: GPL-3+
 LicenseFile: COPYING.txt
 Homepage: https://forge.onera.fr/projects/electrum
