@@ -4,9 +4,9 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera, (C) 2015 IRIT
  * Authors: 
- *   Denis Kuperberg <denis DOT kuperberg AT gmail DOT com>
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
- *   Julien Brunel <julien DOT brunel AT onera DOT fr> 
+ *   Denis Kuperberg 
+ *   David Chemouil 
+ *   Julien Brunel  
  * 
  * This file is part of the Electrum Analyzer.
  * 

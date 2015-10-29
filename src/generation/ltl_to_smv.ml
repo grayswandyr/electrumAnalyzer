@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   Julien Brunel <julien DOT brunel AT onera DOT fr>
+ *   Julien Brunel 
  * 
  * This file is part of the Electrum Analyzer.
  * 

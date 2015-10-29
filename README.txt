@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: b13e6db6d36348623b37cef5a72ce2a6) *)
+(* DO NOT EDIT (digest: bc3bfa707135dd30de7b4575ac75578e) *)
 
 Electrum Analyzer - Electrum is a formal specification language based upon
 first-order linear temporal logic. Electrum Analyzer currently
@@ -15,8 +15,8 @@ instructions.
 Copyright and license
 ---------------------
 
-(c) 2014-2015 Onera
-(c) 2015 IRIT
+(C) 2014-2015 Onera
+(C) 2015 IRIT
 
 Electrum Analyzer is distributed under the terms of the GNU General Public
 License version 3 or later.

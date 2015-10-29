@@ -7,17 +7,19 @@ Authors:
   David Chemouil,
   Julien Brunel,
   Denis Kuperberg
-Maintainers: david.chemouil+electrum@onera.fr
+Maintainers:
+  david.chemouil+electrum@onera.fr,
+  julien.brunel+electrum@onera.fr
 Copyrights: 
-  (c) 2014-2015 Onera
-  (c) 2015 IRIT
+  (C) 2014-2015 Onera
+  (C) 2015 IRIT
 License: GPL-3+
 LicenseFile: COPYING.txt
 Homepage: https://forge.onera.fr/projects/electrum
 
-Synopsis: Electrum is a formal specification language based upon
-  first-order linear temporal logic. Electrum Analyzer currently
-  converts Electrum models into SMV files readable with NuSMV and
+Synopsis: Electrum is a formal specification language based upon 
+  first-order linear temporal logic. Electrum Analyzer currently 
+  converts Electrum models into SMV files readable with NuSMV and 
   nuXmv.
 
 Plugins: DevFiles (0.4), StdFiles (0.4)
@@ -29,12 +31,10 @@ XOCamlbuildExtraArgs:
   -use-ocamlfind -cflags -safe-string,-strict-sequence,-short-paths
   "-use-menhir -menhir 'menhir --infer --unused-token ALL --unused-token ARROW \
   --unused-token SET'" -pkgs pprint,menhirLib,batteries,cmdliner -j 0
+#  -classic-display
 
 BuildDepends: pprint, menhirLib (>= 20150720), str, batteries, cmdliner
 BuildTools:  ocamlbuild
-
-PreBuildCommand: sh util/prebuild.sh
-PostBuildCommand: $rm src/build.ml
 
 Flag warnings
   Description: Activate all compilation warnings.
@@ -47,11 +47,10 @@ Flag profiling
 Executable "electrum"
   Path:       src/main
   MainIs:     electrumAnalyzer.ml
-  CompiledObject: best
+  CompiledObject: native
   Install:    true
   if flag(warnings)
     NativeOpt+: -w A
-    ByteOpt+: -w A
   if flag(profiling)
     NativeOpt+: -p
 
@@ -60,4 +59,4 @@ SourceRepository head
   Type: git
   Location: https://git.onera.fr/electrum.git
   Browser: https://forge.onera.fr/projects/electrum
-  Branch: main
+  Branch: master

@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 2d05589d0ed0d57627f569d1bee726eb) *)
+(* DO NOT EDIT (digest: e6331f9f8dfce7557afa1e2b2def9991) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -611,11 +611,6 @@ let package_default =
      lib_c = [];
      flags =
        [
-          (["oasis_executable_electrum_byte"; "ocaml"; "link"; "byte"],
-            [
-               (OASISExpr.EBool true, S []);
-               (OASISExpr.EFlag "warnings", S [A "-w"; A "A"])
-            ]);
           (["oasis_executable_electrum_native"; "ocaml"; "link"; "native"],
             [
                (OASISExpr.EBool true, S []);
@@ -624,11 +619,6 @@ let package_default =
                (OASISExpr.EAnd
                   (OASISExpr.EFlag "warnings", OASISExpr.EFlag "profiling"),
                  S [A "-w"; A "A"; A "-p"])
-            ]);
-          (["oasis_executable_electrum_byte"; "ocaml"; "ocamldep"; "byte"],
-            [
-               (OASISExpr.EBool true, S []);
-               (OASISExpr.EFlag "warnings", S [A "-w"; A "A"])
             ]);
           (["oasis_executable_electrum_native"; "ocaml"; "ocamldep"; "native"
            ],
@@ -639,11 +629,6 @@ let package_default =
                (OASISExpr.EAnd
                   (OASISExpr.EFlag "warnings", OASISExpr.EFlag "profiling"),
                  S [A "-w"; A "A"; A "-p"])
-            ]);
-          (["oasis_executable_electrum_byte"; "ocaml"; "compile"; "byte"],
-            [
-               (OASISExpr.EBool true, S []);
-               (OASISExpr.EFlag "warnings", S [A "-w"; A "A"])
             ]);
           (["oasis_executable_electrum_native"; "ocaml"; "compile"; "native"],
             [
@@ -663,26 +648,39 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 667 "myocamlbuild.ml"
+# 652 "myocamlbuild.ml"
 (* OASIS_STOP *)
-let () = dispatch (function
-  | After_rules ->
-     rule "version file"
-          ~prod:"version.ml"
-          ~doc:"generate a file with version information:
-                Version.commit is the HEAD commit at the time of building,
-                Version.tag is the name of the last git tag"
-          (fun _env _build ->
-           let trim = "tr -d '\r\n'" in
-           let commit = run_and_read ("git rev-parse HEAD |" ^ trim) in
-           let tag = run_and_read ("git describe --abbrev=0 --tags |" ^ trim) in
-           let code = Printf.sprintf
-                        "let commit = %S\n\
-                         let tag = %S\n"
-                        commit tag in
-           print_endline "TOTO";
-           Echo ([code], "version.ml");
-          )
-  | _ -> ()
-);;
-Ocamlbuild_plugin.dispatch dispatch_default;;
+
+let () =
+  dispatch @@ fun dispatch_hook ->
+  begin
+    let buildfile = "build.ml" in
+    dispatch_default dispatch_hook;
+    match dispatch_hook with
+      | After_rules ->
+          rule "build file"
+            ~prod:buildfile
+            ~doc:"generate a compile-time file with build information:
+                Build.version is the (git) `long' tag name,
+                Build.timestamp is the build time"
+            (fun _env _build ->
+               let open Unix in
+               let version =
+                 String.trim (run_and_read ("git describe --long --always")) in
+               let { tm_sec; tm_min; tm_hour;
+                     tm_mday; tm_mon; tm_year; _ } = gmtime (time ()) in  
+               let timestamp = Printf.sprintf "%d-%02d-%02d %02d:%02d:%02d UTC"
+                 (tm_year + 1900) tm_mon tm_mday tm_hour tm_min tm_sec in
+               let code = Printf.sprintf
+                            "let version = %S\n\
+                             let timestamp = %S\n"
+                            version timestamp in
+               Printf.printf
+                 "Generating compile-time file %S \
+                  with version= %S and timestamp= %S.\n%!"
+                 buildfile version timestamp;
+               Echo ([code], buildfile)
+            )
+      | _ -> ()
+  end
+;;

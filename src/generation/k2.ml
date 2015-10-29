@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera, (C) 2015 IRIT
  * Authors: 
- *   Denis Kuperberg <denis DOT kuperberg AT gmail DOT com>
+ *   Denis Kuperberg 
  * 
  * This file is part of the Electrum Analyzer.
  * 

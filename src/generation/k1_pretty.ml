@@ -2,8 +2,8 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   Julien Brunel <julien DOT brunel AT onera DOT fr>
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   Julien Brunel 
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 

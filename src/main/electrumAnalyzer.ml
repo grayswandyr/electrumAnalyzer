@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera; (C) 2015 IRIT
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -114,8 +114,8 @@ let run verbosity prettyprint inclpath infile outfile =
     Cfg.alloyfolder := inclpath ^ "/";
 
     Printf.printf
-      "%s v%s (build: %s).\n\
-       Copyright (c) 2014-2015 Onera, (c) 2015 IRIT.\n\
+      "%s %s (%s).\n\
+       (C) 2014-2015 Onera, (C) 2015 IRIT.\n\
        Released under the GNU GPL 3.0 or later WITHOUT ANY WARRANTY.\n\
        The %s relies on third-party free software.\n\
        Please use the --help option for more information.\n%!"
@@ -210,7 +210,7 @@ let main_info =
               `P "Report issues at \
                   <https://forge.onera.fr/projects/electrum/issues/new>.";
               `S "COPYRIGHT";
-              `P "Electrum Analyzer (c) 2014-2015 Onera, (c) 2015 IRIT";
+              `P "Electrum Analyzer (C) 2014-2015 Onera, (C) 2015 IRIT";
               `P "The Electrum Analyzer is free software: you can redistribute \
                   it and/or modify it under the terms of the GNU General \
                   Public License as published by the Free Software Foundation, \

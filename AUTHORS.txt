@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 47ed55582e8818e7c8c37848610f813b) *)
+(* DO NOT EDIT (digest: 2a4ab8ef8b01b85372546f1232b294c7) *)
 
 Authors of Electrum Analyzer:
 
@@ -10,6 +10,7 @@ Authors of Electrum Analyzer:
 Current maintainers of Electrum Analyzer:
 
 * david.chemouil+electrum@onera.fr
+* julien.brunel+electrum@onera.fr
 
 (* OASIS_STOP *)
 

@@ -1,8 +1,8 @@
 (*******************************************************************************
- * Time-stamp: <2015-07-27 CEST 10:25:35 David Chemouil>
+ * Time-stamp: <2015-10-29 CET 10:49:44 David Chemouil>
 
-   Electrum Analyzer Copyright (C) 2014-2015 Onera Authors: Julien Brunel <julien
-   DOT brunel AT onera DOT fr>
+   Electrum Analyzer Copyright (C) 2014-2015 Onera 
+   Authors: Julien Brunel 
 
    This file is part of the Electrum Analyzer.
 
