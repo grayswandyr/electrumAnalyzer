@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -28,7 +28,7 @@
  ****************************************************************************)
 
 open Batteries
-  
+
 type t = {
   this : bool;
   path : Ast_ident.t list;

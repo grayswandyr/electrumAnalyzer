@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -42,8 +42,8 @@ let make ~begp ~endp = {
 let dummy_loc=make Lexing.dummy_pos Lexing.dummy_pos 
 
 let to_string pos=
-	let col1=pos.begp.pos_cnum-pos.begp.pos_bol in
-	let col2=pos.endp.pos_cnum-pos.endp.pos_bol in
-	"Line "^(string_of_int pos.begp.pos_lnum)
-	^" characters "^(string_of_int col1)
-	^"-"^(string_of_int col2)
+  let col1=pos.begp.pos_cnum-pos.begp.pos_bol in
+  let col2=pos.endp.pos_cnum-pos.endp.pos_bol in
+  "Line "^(string_of_int pos.begp.pos_lnum)
+  ^" characters "^(string_of_int col1)
+  ^"-"^(string_of_int col2)

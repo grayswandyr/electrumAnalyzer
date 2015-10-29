@@ -1,10 +1,11 @@
 (*****************************************************************************
- * Time-stamp: <2015-04-27 CEST 11:35:00 David Chemouil>
+ * Time-stamp: <2015-10-29 CET 10:12:32 David Chemouil>
  *
  * Electrum Analyzer 
- * Copyright (C) 2014-2015 Onera
+ * Copyright (C) 2014-2015 Onera; (C) 2015 IRIT
  * Authors: 
- *   Denis Kuperberg <denis DOT kuperberg AT onera DOT fr>
+ *   Denis Kuperberg 
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -24,42 +25,42 @@
  ****************************************************************************)
 
 (*****************************************************************************
-typing.mli -- computes the bound type of Electrum expressions
+   typing.mli -- computes the bound type of Electrum expressions
 
 
-Specification:
+   Specification:
 
-An environment envir_sig contains fields:
-	*env_map mapping names to types, for variables
-	*sign_ord: mapping each signature name to the set of bigger signatures
-	*pred_map: mapping each predicate name to a tuple of types, describing its arity
+   An environment envir_sig contains fields:
+ *env_map mapping names to types, for variables
+ *sign_ord: mapping each signature name to the set of bigger signatures
+ *pred_map: mapping each predicate name to a tuple of types, describing its arity
 
-compute_bt takes an expression and an environment, and computes the type. It updates the field typ of the expression with the result.
+   compute_bt takes an expression and an environment, and computes the type. It updates the field typ of the expression with the result.
 
-process_root takes a file and types everything in it, including external files called by it, then returns the computed environment.
-It labels each expression of the AST with the computed type, for further use.
+   process_root takes a file and types everything in it, including external files called by it, then returns the computed environment.
+   It labels each expression of the AST with the computed type, for further use.
 
  ****************************************************************************)
- 
- 
 
- 
+
+
+
 open Types
 
 type envir_sig = {
-	env_map:envir;
-	sign_ord:sig_order;
-	cursig:bound_type option;
-	predmap: envirlist;
-	predicates: Ast.Par.pred map;
-	facts_typed: bool;
-	sig_list: (Ast_qname.t list * Ast_par.signature) list;
-	funclist: (Ast_qname.t * Ast_par.func) list;
-	factlist: Ast_par.fact list;
-	cmdlist: Ast_ctrl.cmd list;
-	assertlist: Ast_par.assertion list;
-	last_try: bool;
-	}
+  env_map:envir;
+  sign_ord:sig_order;
+  cursig:bound_type option;
+  predmap: envirlist;
+  predicates: Ast.Par.pred map;
+  facts_typed: bool;
+  sig_list: (Ast_qname.t list * Ast_par.signature) list;
+  funclist: (Ast_qname.t * Ast_par.func) list;
+  factlist: Ast_par.fact list;
+  cmdlist: Ast_ctrl.cmd list;
+  assertlist: Ast_par.assertion list;
+  last_try: bool;
+}
 
 val rep_expr: Ast_qname.t -> Ast_expr.prim_expr -> Ast_expr.expr -> Ast_expr.expr
 

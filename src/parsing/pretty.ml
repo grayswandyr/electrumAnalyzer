@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -371,7 +371,7 @@ let file_to_document ((module_opt, imports, par_cmds) : file) =
     separate_map (hardline ^^ hardline) par_cmd_to_document par_cmds
   ]
 
-       
+
 let print ?(ribbon=0.8) ?(width=80) ast =
   file_to_document ast
   |> enclose empty hardline

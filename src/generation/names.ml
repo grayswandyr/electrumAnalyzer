@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -26,7 +26,7 @@
 (* names.ml - names handling common to several phases of compilation *)
 
 open Batteries
-    
+
 type name = string
 
 let univ = "univ"

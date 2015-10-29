@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -23,45 +23,45 @@
  * <http://www.gnu.org/licenses/>.
  ******************************************************************************)
 
- 
+
 module StringSet = Set.Make(String)
 
 (* Electrum keywords *)
 module Kwd = struct
-  let abstract_ = "abstract"	
-  let all_ = "all"	
-  let and_ = "and"	
-  let as_ = "as"	
-  let assert_ = "assert"	
-  let but_ = "but"	
-  let check_ = "check"	
-  let disj_ = "disj"	
-  let else_ = "else"	
-  let enum_ = "enum"	
-  let exactly_ = "exactly"	
-  let extends_ = "extends"	
-  let fact_ = "fact"	
-  let for_ = "for"	
-  let fun_ = "fun"	
-  let iden_ = "iden"	
-  let iff_ = "iff"	
-  let implies_ = "implies"	
-  let in_ = "in"	
-  let int_ = "Int"	
-  let let_ = "let"	
-  let lone_ = "lone"	
-  let module_ = "module"	
-  let no_ = "no"	
-  let none_ = "none"	
-  let not_ = "not"	
-  let one_ = "one"	
-  let open_ = "open"	
-  let or_ = "or"	
-  let pred_ = "pred"	
-  let run_ = "run"	
-  let set_ = "set"	
-  let sig_ = "sig"	
-  let some_ = "some"	
+  let abstract_ = "abstract"  
+  let all_ = "all"  
+  let and_ = "and"  
+  let as_ = "as"  
+  let assert_ = "assert"  
+  let but_ = "but"  
+  let check_ = "check"  
+  let disj_ = "disj"  
+  let else_ = "else"  
+  let enum_ = "enum"  
+  let exactly_ = "exactly"  
+  let extends_ = "extends"  
+  let fact_ = "fact"  
+  let for_ = "for"  
+  let fun_ = "fun"  
+  let iden_ = "iden"  
+  let iff_ = "iff"  
+  let implies_ = "implies"  
+  let in_ = "in"  
+  let int_ = "Int"  
+  let let_ = "let"  
+  let lone_ = "lone"  
+  let module_ = "module"  
+  let no_ = "no"  
+  let none_ = "none"  
+  let not_ = "not"  
+  let one_ = "one"  
+  let open_ = "open"  
+  let or_ = "or"  
+  let pred_ = "pred"  
+  let run_ = "run"  
+  let set_ = "set"  
+  let sig_ = "sig"  
+  let some_ = "some"  
   let sum_ = "sum"
   let this_ = "this"
   let univ_ = "univ"
@@ -78,7 +78,7 @@ end
 
 (* Electrum symbols *)
 module Sym = struct
-  let and_ = "&&"	
+  let and_ = "&&"  
   let arrow_ = "->"
   let at_ = "@"
   let bar_ = "|"
@@ -101,7 +101,7 @@ module Sym = struct
   let lte_ = "=<"
   let minus_ = "-"
   let neq_ = "!="
-  let or_ = "||"	
+  let or_ = "||"  
   let override_ = "++"
   let plus_ = "+"
   let prime_ = "'"

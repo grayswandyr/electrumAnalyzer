@@ -1,7 +1,7 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 97fe40d611ece220891b99073b7fa82d) *)
+(* DO NOT EDIT (digest: bc3bfa707135dd30de7b4575ac75578e) *)
 
-electrum-analyzer - Electrum is a formal specification language based upon
+Electrum Analyzer - Electrum is a formal specification language based upon
 first-order linear temporal logic. Electrum Analyzer currently
 converts Electrum models into SMV files readable with NuSMV and
 nuXmv.
@@ -16,8 +16,9 @@ Copyright and license
 ---------------------
 
 (C) 2014-2015 Onera
+(C) 2015 IRIT
 
-electrum-analyzer is distributed under the terms of the GNU General Public
+Electrum Analyzer is distributed under the terms of the GNU General Public
 License version 3 or later.
 
 See [COPYING.txt](COPYING.txt) for more information.

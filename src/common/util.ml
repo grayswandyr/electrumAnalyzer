@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -35,7 +35,7 @@ let ifthen c t x = ifthenelse c t ignore x
 
 module PPrintX = struct
   open PPrint
-      
+
   let to_string ?(ribbon=0.95) ?(width=80) doc =
     let buf = Legacy.Buffer.create 100 in
     ToBuffer.pretty ribbon width buf doc;

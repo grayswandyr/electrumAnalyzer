@@ -1,11 +1,11 @@
 (*******************************************************************************
- * Time-stamp: <2015-09-08 CEST 17:56:09 David Chemouil>
+ * Time-stamp: <2015-10-29 CET 09:40:08 David Chemouil>
  * 
  * Electrum Analyzer 
- * Copyright (C) 2014-2015 Onera
+ * Copyright (C) 2014-2015 Onera, (C) 2015 IRIT
  * Authors: 
- *   Denis Kuperberg <denis DOT kuperberg AT gmail DOT com>
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   Denis Kuperberg 
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -32,90 +32,90 @@ open Profile
 
 (* These are defined in Profile 
 
-(* partial order on signatures *)
-module NameMap = Map.Make(struct type t=name let compare = compare end)
+   (* partial order on signatures *)
+   module NameMap = Map.Make(struct type t=name let compare = compare end)
 
-(* a signature is mapped to the signatures bigger than itself *)
-module NameSet = Set.Make(struct type t=name let compare = compare end)
+   (* a signature is mapped to the signatures bigger than itself *)
+   module NameSet = Set.Make(struct type t=name let compare = compare end)
 
-(* equivalence classes of signatures *)
-module EqClasses= Set.Make(struct type t=NameSet.t let compare = NameSet.compare end)
+   (* equivalence classes of signatures *)
+   module EqClasses= Set.Make(struct type t=NameSet.t let compare = NameSet.compare end)
 
-(* the second component gives the Equivalence classes of disjoint signatures (brothers in extends) *)
-type signame_order = ((NameSet.t * bool) NameMap.t) * EqClasses.t
+   (* the second component gives the Equivalence classes of disjoint signatures (brothers in extends) *)
+   type signame_order = ((NameSet.t * bool) NameMap.t) * EqClasses.t
 
-(*changes the qnames in names in the signature 
-*)
+   (*changes the qnames in names in the signature 
+ *)
 
-let base_toname base= match base with
-	| Base_INT -> int
-	| Base_UNIV -> univ
-	| Base_Sig qname -> qn_to_name qname
-	| Base_Ndef qname -> failwith "Undefined signature"
+   let base_toname base= match base with
+   | Base_INT -> int
+   | Base_UNIV -> univ
+   | Base_Sig qname -> qn_to_name qname
+   | Base_Ndef qname -> failwith "Undefined signature"
 
-let sigord_toname sigord=
-	QNameMap.fold 
-	(fun base (set,b) accmap -> (* b is the boolean for 'dynamic' *)
-		let nbase = qn_to_name base in
-		let nset = QNameSet.fold 
-			(fun x acc-> NameSet.add (qn_to_name x) acc)
-			set NameSet.empty
-		in
-		NameMap.add nbase (nset,b) accmap)
-	 sigord NameMap.empty
+   let sigord_toname sigord=
+   QNameMap.fold 
+   (fun base (set,b) accmap -> (* b is the boolean for 'dynamic' *)
+   let nbase = qn_to_name base in
+   let nset = QNameSet.fold 
+   (fun x acc-> NameSet.add (qn_to_name x) acc)
+   set NameSet.empty
+   in
+   NameMap.add nbase (nset,b) accmap)
+   sigord NameMap.empty
 
-(* is s included in t ?*)
-let sort_incl sigord s t=
-		let (set,b)= try (NameMap.find s sigord)
-		with Not_found -> assert false
-		in s=t || NameSet.mem t set
+   (* is s included in t ?*)
+   let sort_incl sigord s t=
+   let (set,b)= try (NameMap.find s sigord)
+   with Not_found -> assert false
+   in s=t || NameSet.mem t set
 
 
-(* are two sort intersecting ? *)
-let sort_inter sigord_tot s t =
-	let (sigord, classes) = sigord_tot in 
-	let incl=
-	  if s=t then true 
-	  else
-		NameMap.exists (fun i (big,b) -> 
-			(s=i || NameSet.mem s big)
-			&& (t=i || NameSet.mem t big))
-			sigord
-	in let disj=
-	 (* do they have parents of the same class ? *)
-	 EqClasses.exists 
-		(fun set -> 
-		(* exists x,y in set, so disjoint *)
-			NameSet.exists (fun x->
-			NameSet.exists (fun y->
-				(* s in x and t in y *)
-				sort_incl sigord s x && sort_incl sigord t y
-			) set
-			) set
-		) classes
-	in incl && not disj
+   (* are two sort intersecting ? *)
+   let sort_inter sigord_tot s t =
+   let (sigord, classes) = sigord_tot in 
+   let incl=
+   if s=t then true 
+   else
+   NameMap.exists (fun i (big,b) -> 
+   (s=i || NameSet.mem s big)
+   && (t=i || NameSet.mem t big))
+   sigord
+   in let disj=
+   (* do they have parents of the same class ? *)
+   EqClasses.exists 
+   (fun set -> 
+   (* exists x,y in set, so disjoint *)
+   NameSet.exists (fun x->
+   NameSet.exists (fun y->
+   (* s in x and t in y *)
+   sort_incl sigord s x && sort_incl sigord t y
+   ) set
+   ) set
+   ) classes
+   in incl && not disj
 
-let sort_inter_type sigord_tot s t = failwith "TBD"
+   let sort_inter_type sigord_tot s t = failwith "TBD"
 *)
 
 
 (*
-module Rel : sig
-  type rel = private { 
-    rel_name : name; 
-    rel_prof : Profile.t
-  }
-  val make : name -> Profile.t -> rel
-end
-= struct
-  type rel = { 
-    rel_name : name; 
-    rel_prof : Profile.t
-  }
-  let make rel_name rel_prof =
-    { rel_name; rel_prof }
-end
-include Rel
+   module Rel : sig
+   type rel = private { 
+   rel_name : name; 
+   rel_prof : Profile.t
+   }
+   val make : name -> Profile.t -> rel
+   end
+   = struct
+   type rel = { 
+   rel_name : name; 
+   rel_prof : Profile.t
+   }
+   let make rel_name rel_prof =
+   { rel_name; rel_prof }
+   end
+   include Rel
 *)
 
 
@@ -191,7 +191,7 @@ and prop =
   | Since of prop * prop
   (* quantifiers *)
   (* The name list is in fact expected to be a single name. *)
-  (* Appears in this definition for historical reasons. *)			
+  (* Appears in this definition for historical reasons. *)      
   | Forall of name list * term * prop 
   | Exists of name list * term * prop 
 
@@ -205,7 +205,7 @@ module TermSet = Set.Make(struct type t=term let compare = Pervasives.compare en
 let remove_from_env env to_remove =
   let open List in
   filter (fun (x, _) -> not @@ mem x to_remove) env
-    
+
 let rec subst_prop env p =
   match p with
     | Equal (t1, t2) -> Equal (subst_term env t1, subst_term env t2)
@@ -265,53 +265,53 @@ and subst_term env t =
 (* perform on-the-fly simplifications *)
 let and1 (p1,p2)=
   match p1, p2 with
-  | False, _ -> False
-  | _, False -> False
-  | True, _ -> p2
-  | _, True -> p1
-  | x, y when x = y -> x
-  | _, _ -> And (p1, p2)
+    | False, _ -> False
+    | _, False -> False
+    | True, _ -> p2
+    | _, True -> p1
+    | x, y when x = y -> x
+    | _, _ -> And (p1, p2)
 
 let or1 (p1,p2)=
-	if p1=True ||p2=True then True else
-	if p1= False then p2
-	else if p2= False then p1
-	else  Or(p1,p2)
+  if p1=True ||p2=True then True else
+  if p1= False then p2
+  else if p2= False then p1
+  else  Or(p1,p2)
 
 let always1 p= 
-	match p with
-	| True-> True
-	| False -> False
-	| Always q -> Always q
-	| _ -> Always p
+  match p with
+    | True-> True
+    | False -> False
+    | Always q -> Always q
+    | _ -> Always p
 
 let forall1 (xl,t,p)= 
-	if p=True then True 
-	else
-	Forall(xl,t,p)
+  if p=True then True 
+  else
+    Forall(xl,t,p)
 
 let exists1 (xl,t,p)= 
-	if p=False then False
-	else
-	Exists(xl,t,p)
+  if p=False then False
+  else
+    Exists(xl,t,p)
 
 let rec not1 = function 
-	|True -> False
-	|False -> True
-	|Exists (l,t,p) -> forall1 (l, t, not1 p)
-	|Forall (l,t,p) -> exists1 (l , t ,not1 p)
-	|Not p -> p
-	|p -> Not p
+  |True -> False
+  |False -> True
+  |Exists (l,t,p) -> forall1 (l, t, not1 p)
+  |Forall (l,t,p) -> exists1 (l , t ,not1 p)
+  |Not p -> p
+  |p -> Not p
 
 let impl1 (p1,p2)= 
-	match p1 with
-	| True -> p2
-	| False -> True
-	| _ -> (match p2 with 
-		| True -> True
-		| False -> not1 p1
-		| _ -> Impl (p1,p2)
-		)
+  match p1 with
+    | True -> p2
+    | False -> True
+    | _ -> (match p2 with 
+          | True -> True
+          | False -> not1 p1
+          | _ -> Impl (p1,p2)
+        )
 
 let rec iff1 = function 
   | True, True
@@ -339,7 +339,7 @@ let make_tuple_term ys_ss = match ys_ss with
               profile =
                 Profile.Union.(singleton (choose acc.profile @ [s]))})
         (make_var_term hd) tl
-          
+
 
 let id_term = {
   term = TConstRel Names.ident;
@@ -361,8 +361,8 @@ let sig_term name={
   profile= Profile.sort_prof name}
 
 let prod_term t1 t2={
-	term=TBinop(Product, t1, t2);
- profile = prof_prod t1.profile t2.profile;}
+  term=TBinop(Product, t1, t2);
+  profile = prof_prod t1.profile t2.profile;}
 
 (* makes a non-empty Cartesian product of terms, just the given term if n = 1 *)
 let nprod_term ts = match ts with 
@@ -374,86 +374,86 @@ let nprod_term ts = match ts with
               profile = prof_prod acc.profile t.profile })
         hd tl
 
-  (* true iff the term is variable, false if it is static. *)
+(* true iff the term is variable, false if it is static. *)
 let rec is_term_var sigord t =
   match t.term with 
-  | TConstRel _ -> false
-  | TVarRel _ -> true
-  | TSort s -> is_var2 sigord s 
-  | TVar _ -> false
-  | TUnop (op, t2) -> is_term_var sigord t2
-  | TBinop (op, t1, t2) -> is_term_var sigord t1 || is_term_var sigord t2
-  | TIfThenElse (p, t1,  t2) -> 
-      prop_contains_var_terms sigord p || is_term_var sigord t1 || is_term_var sigord t2
-  | TCompr (l , p) -> at_least_one_term_is_var sigord l
+    | TConstRel _ -> false
+    | TVarRel _ -> true
+    | TSort s -> is_var2 sigord s 
+    | TVar _ -> false
+    | TUnop (op, t2) -> is_term_var sigord t2
+    | TBinop (op, t1, t2) -> is_term_var sigord t1 || is_term_var sigord t2
+    | TIfThenElse (p, t1,  t2) -> 
+        prop_contains_var_terms sigord p || is_term_var sigord t1 || is_term_var sigord t2
+    | TCompr (l , p) -> at_least_one_term_is_var sigord l
 
 and at_least_one_term_is_var sigord l =
   match l with 
-  | [] -> false
-  | (_,t) :: r -> is_term_var sigord t || at_least_one_term_is_var sigord r
+    | [] -> false
+    | (_,t) :: r -> is_term_var sigord t || at_least_one_term_is_var sigord r
 
 and prop_contains_var_terms sigord p =
   match p with
-  | True | False -> false
-  | Equal (t1, t2) | In (t1, t2)  -> is_term_var sigord t1 || is_term_var sigord t2
-  | Comp (op, ie1, ie2) ->
-     iexpr_contains_var_terms sigord ie1 || iexpr_contains_var_terms sigord ie2
-  | Not p -> prop_contains_var_terms sigord p
-  | And (p1, p2) | Or (p1, p2) | Impl (p1, p2)| Iff (p1, p2)  -> 
-     prop_contains_var_terms sigord p1 || prop_contains_var_terms sigord p2
-  | Next p1  | Always p1 | Eventually p1 -> prop_contains_var_terms sigord p1
-  | Previous p1  | Hist p1 | Once p1 -> prop_contains_var_terms sigord p1
-  | Until (p1, p2) | Release (p1, p2) | Since (p1, p2) -> 
-      prop_contains_var_terms sigord p1 || prop_contains_var_terms sigord p2
-  | Exists (xs, t, p1) | Forall (xs, t, p1) -> 
-     is_term_var sigord t || prop_contains_var_terms sigord p1
-    
+    | True | False -> false
+    | Equal (t1, t2) | In (t1, t2)  -> is_term_var sigord t1 || is_term_var sigord t2
+    | Comp (op, ie1, ie2) ->
+        iexpr_contains_var_terms sigord ie1 || iexpr_contains_var_terms sigord ie2
+    | Not p -> prop_contains_var_terms sigord p
+    | And (p1, p2) | Or (p1, p2) | Impl (p1, p2)| Iff (p1, p2)  -> 
+        prop_contains_var_terms sigord p1 || prop_contains_var_terms sigord p2
+    | Next p1  | Always p1 | Eventually p1 -> prop_contains_var_terms sigord p1
+    | Previous p1  | Hist p1 | Once p1 -> prop_contains_var_terms sigord p1
+    | Until (p1, p2) | Release (p1, p2) | Since (p1, p2) -> 
+        prop_contains_var_terms sigord p1 || prop_contains_var_terms sigord p2
+    | Exists (xs, t, p1) | Forall (xs, t, p1) -> 
+        is_term_var sigord t || prop_contains_var_terms sigord p1
+
 and iexpr_contains_var_terms sigord ie =
   match ie with
-  | IConst _ -> false
-  | IVar _ -> false
-  | IOp (io, ie1, ie2) -> 
-     iexpr_contains_var_terms sigord ie1 || iexpr_contains_var_terms sigord ie2
-  | IMult (i, ie) -> iexpr_contains_var_terms sigord ie
-  | ICard t -> is_term_var sigord t
+    | IConst _ -> false
+    | IVar _ -> false
+    | IOp (io, ie1, ie2) -> 
+        iexpr_contains_var_terms sigord ie1 || iexpr_contains_var_terms sigord ie2
+    | IMult (i, ie) -> iexpr_contains_var_terms sigord ie
+    | ICard t -> is_term_var sigord t
 
 let rec prop_without_temporal_op p =
   match p with
-  | True | False -> true
-  | Equal (t1, t2) | In (t1, t2)  -> 
-      term_without_temporal_op t1 && term_without_temporal_op t2
-  | Comp (op, ie1, ie2) -> 
-     iexpr_without_temporal_op ie1 && iexpr_without_temporal_op ie2
-  | Not p -> prop_without_temporal_op p
-  | And (p1, p2) | Or (p1, p2) | Impl (p1, p2)| Iff (p1, p2)  -> 
-     prop_without_temporal_op p1 && prop_without_temporal_op p2
-  | Next p1  | Always p1 | Eventually p1 | Previous p1 | Hist p1 | Once p1 -> false
-  | Until (p1, p2) | Release (p1, p2) | Since (p1, p2) -> false
-  | Exists (xs, t, p1) | Forall (xs, t, p1) -> 
-     term_without_temporal_op t && prop_without_temporal_op p1
-							    
+    | True | False -> true
+    | Equal (t1, t2) | In (t1, t2)  -> 
+        term_without_temporal_op t1 && term_without_temporal_op t2
+    | Comp (op, ie1, ie2) -> 
+        iexpr_without_temporal_op ie1 && iexpr_without_temporal_op ie2
+    | Not p -> prop_without_temporal_op p
+    | And (p1, p2) | Or (p1, p2) | Impl (p1, p2)| Iff (p1, p2)  -> 
+        prop_without_temporal_op p1 && prop_without_temporal_op p2
+    | Next p1  | Always p1 | Eventually p1 | Previous p1 | Hist p1 | Once p1 -> false
+    | Until (p1, p2) | Release (p1, p2) | Since (p1, p2) -> false
+    | Exists (xs, t, p1) | Forall (xs, t, p1) -> 
+        term_without_temporal_op t && prop_without_temporal_op p1
+
 and term_without_temporal_op t =
   match t.term with 
-  | TConstRel _ -> true
-  | TVarRel _ -> true
-  | TSort _ -> true
-  | TVar _ -> true
-  | TUnop (Prime, t1) -> false
-  | TUnop (_, t1) ->  term_without_temporal_op t1
-  | TBinop (_, t1, t2) -> term_without_temporal_op t1 && term_without_temporal_op t2
-  | TIfThenElse (p, t1,  t2) -> 
-     term_without_temporal_op t1 && term_without_temporal_op t2 
-     && prop_without_temporal_op p
-  | TCompr (_ , p) -> prop_without_temporal_op p
+    | TConstRel _ -> true
+    | TVarRel _ -> true
+    | TSort _ -> true
+    | TVar _ -> true
+    | TUnop (Prime, t1) -> false
+    | TUnop (_, t1) ->  term_without_temporal_op t1
+    | TBinop (_, t1, t2) -> term_without_temporal_op t1 && term_without_temporal_op t2
+    | TIfThenElse (p, t1,  t2) -> 
+        term_without_temporal_op t1 && term_without_temporal_op t2 
+        && prop_without_temporal_op p
+    | TCompr (_ , p) -> prop_without_temporal_op p
 
 and iexpr_without_temporal_op ie =
   match ie with
-  | IConst _ -> true
-  | IVar _ -> true
-  | IOp (io, ie1, ie2) -> 
-     iexpr_without_temporal_op ie1 && iexpr_without_temporal_op ie2
-  | IMult (i, ie) -> iexpr_without_temporal_op ie
-  | ICard t -> term_without_temporal_op t
+    | IConst _ -> true
+    | IVar _ -> true
+    | IOp (io, ie1, ie2) -> 
+        iexpr_without_temporal_op ie1 && iexpr_without_temporal_op ie2
+    | IMult (i, ie) -> iexpr_without_temporal_op ie
+    | ICard t -> term_without_temporal_op t
 
 
 (* The first parameter is of type signame_order (used to know what sorts are variable). 
@@ -463,18 +463,18 @@ and iexpr_without_temporal_op ie =
    We consider p corresponds to an invariant if :
    - p = Always p1 where p1 does not contain any temporal operator,
    - p does not contain any temporal operator and p only contains static terms.
- *)
+*)
 
 let prop_is_trivial_invar sigord p =
   match p with
-  | Always p1 -> prop_without_temporal_op p1
-  | _ -> prop_without_temporal_op p && not (prop_contains_var_terms sigord p)
+    | Always p1 -> prop_without_temporal_op p1
+    | _ -> prop_without_temporal_op p && not (prop_contains_var_terms sigord p)
 
 let remove_always_in_static_fact p =
- match p with 
- | Always p1 -> p1
- | _ -> p
+  match p with 
+    | Always p1 -> p1
+    | _ -> p
 
 
 
-						      
+

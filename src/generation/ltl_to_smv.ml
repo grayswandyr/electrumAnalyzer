@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   Julien Brunel <julien DOT brunel AT onera DOT fr>
+ *   Julien Brunel 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -59,14 +59,14 @@ let doc_module_main =
   flow space [ string "MODULE"; string "main" ]
   ^^ hardline
   ^^ flow space [ string "JUSTICE"; doc_true; semi ]
-       
+
 let doc_frozenvar = string "FROZENVAR"
 let doc_boolean = string "boolean"
 
 let doc_var = string "VAR"
 let doc_invar = string "INVAR"
 let doc_ltlspec = string "LTLSPEC"
-            
+
 module NameSet = Set.Make (struct type t = name let compare = compare end)
 
 type ltl_document = {
@@ -86,42 +86,42 @@ let document_of_comp c = match c with
   | Gt -> doc_gt
   | Eq  -> doc_eq
   | Neq -> doc_neq
-  
+
 let rec document_of_term t = match t with
   | TConst i -> 
-     { formula = string (string_of_int i);
-       const_atoms = NameSet.empty;
-       var_atoms = NameSet.empty;
-     }
+      { formula = string (string_of_int i);
+        const_atoms = NameSet.empty;
+        var_atoms = NameSet.empty;
+      }
   | TBin (o, t1, t2) ->
-     let d1 = document_of_term t1 in
-     let d2 = document_of_term t2 in
-     { formula = infix (document_of_op o) d1.formula d2.formula;
-       const_atoms = NameSet.union d1.const_atoms d2.const_atoms;
-       var_atoms = NameSet.union d1.var_atoms d2.var_atoms;
-     }
+      let d1 = document_of_term t1 in
+      let d2 = document_of_term t2 in
+      { formula = infix (document_of_op o) d1.formula d2.formula;
+        const_atoms = NameSet.union d1.const_atoms d2.const_atoms;
+        var_atoms = NameSet.union d1.var_atoms d2.var_atoms;
+      }
   | TMult (i, t1) ->
-     let d1 = document_of_term t1 in
-     { formula = infix star (string (string_of_int i)) d1.formula;
-       const_atoms = d1.const_atoms;
-       var_atoms = d1.var_atoms;
-     }
+      let d1 = document_of_term t1 in
+      { formula = infix star (string (string_of_int i)) d1.formula;
+        const_atoms = d1.const_atoms;
+        var_atoms = d1.var_atoms;
+      }
   | TCount (formulalist) -> 
-     let doclist = List.map document_of_prop formulalist in
-     let formulas, const_ats, var_ats = 
-       List.fold_right 
-         (fun doc (acc_form, acc_const, acc_var) ->     
-          doc.formula :: acc_form,
-          (NameSet.union doc.const_atoms acc_const) , 
-          (NameSet.union doc.var_atoms acc_var)
-         )
-         doclist
-         ([], NameSet.empty, NameSet.empty)
-     in
-     { formula = doc_count ^^ (parens @@ separate comma formulas);
-       const_atoms = const_ats;
-       var_atoms = var_ats;
-     }
+      let doclist = List.map document_of_prop formulalist in
+      let formulas, const_ats, var_ats = 
+        List.fold_right 
+          (fun doc (acc_form, acc_const, acc_var) ->     
+             doc.formula :: acc_form,
+             (NameSet.union doc.const_atoms acc_const) , 
+             (NameSet.union doc.var_atoms acc_var)
+          )
+          doclist
+          ([], NameSet.empty, NameSet.empty)
+      in
+      { formula = doc_count ^^ (parens @@ separate comma formulas);
+        const_atoms = const_ats;
+        var_atoms = var_ats;
+      }
 and 
   document_of_prop prop = match prop with
   | LTrue -> { formula = doc_true ; 
@@ -133,26 +133,26 @@ and
                 var_atoms = NameSet.empty ;
               }
   | LAtom n ->  
-     { formula = string n ;
-       const_atoms = NameSet.empty ;
-       var_atoms = NameSet.singleton n ;
-     }
+      { formula = string n ;
+        const_atoms = NameSet.empty ;
+        var_atoms = NameSet.singleton n ;
+      }
   | LConstAtom n -> { formula = string n ;
                       const_atoms = NameSet.singleton n ;
                       var_atoms = NameSet.empty ;
                     }
 
   | LComp (c , t1 , t2) -> 
-     let d1 = document_of_term t1 in
-     let d2 = document_of_term t2 in
-     { formula = 
-         parens (d1.formula 
-                 ^^ (document_of_comp c)
-                 ^^ d2.formula) ;
-       const_atoms = NameSet.union d1.const_atoms d2.const_atoms ;
-       var_atoms = NameSet.union d1.var_atoms d2.var_atoms ;
-     }
-  
+      let d1 = document_of_term t1 in
+      let d2 = document_of_term t2 in
+      { formula = 
+          parens (d1.formula 
+                  ^^ (document_of_comp c)
+                  ^^ d2.formula) ;
+        const_atoms = NameSet.union d1.const_atoms d2.const_atoms ;
+        var_atoms = NameSet.union d1.var_atoms d2.var_atoms ;
+      }
+
   | LNot p -> 
       let d = document_of_prop p in
       { d with formula = parens @@ bang ^//^ d.formula }
@@ -206,10 +206,10 @@ and
         const_atoms = NameSet.union d1.const_atoms d2.const_atoms ;
         var_atoms = NameSet.union d1.var_atoms d2.var_atoms ;
       }
-  
+
   | LPrevious p ->
-     let d = document_of_prop p in
-     { d with formula = parens @@ doc_y ^//^ d.formula }
+      let d = document_of_prop p in
+      { d with formula = parens @@ doc_y ^//^ d.formula }
   | LHist p -> 
       let d = document_of_prop p in
       { d with formula = parens @@ doc_h ^//^ d.formula }
@@ -282,7 +282,7 @@ let ltl_to_string formula =
 
 let print ?(ribbon=0.8) ?(margin=80) ltldoc =
   ToChannel.pretty ribbon margin Legacy.stdout 
-       ltldoc.formula
+    ltldoc.formula
 
 let print_ltl  ?(ribbon=0.8) ?(margin=80) formula =
   ToChannel.pretty ribbon margin Legacy.stdout 
