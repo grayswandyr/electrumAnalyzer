@@ -40,8 +40,8 @@ type gen_env = {
   bindings : (name * name) list; (* currently bound variables with their respective sort*)
   sigenv : sig_env   (* environment inherited from the typing phase *)
 }
- 
- 
+
+
 let fresh, reset =
   let start = (-1) in
   let count = ref start in
@@ -55,7 +55,7 @@ let fresh, reset =
   let r () = count := start
   in
   (Names.make % f, r)
-    
+
 
 
 let variables_to_string = Util.ListX.to_string String.print
@@ -63,15 +63,15 @@ let variables_to_string = Util.ListX.to_string String.print
 (* says whether a variable appears in the K1 term t *) 
 let rec var_is_in_term t =
   match t.term with
-  | TConstRel _ -> false
-  | TVarRel _ -> false
-  | TSort _ -> false 
-  | TVar _ -> true
-  | TUnop (_, t2) -> var_is_in_term t2
-  | TBinop (_, t2, t3) -> var_is_in_term t2 || var_is_in_term t3
-  | TIfThenElse (p, t2, t3) -> (* a first approximation,, we should detect a variable in p *)
-     true
-  | TCompr _ -> true
+    | TConstRel _ -> false
+    | TVarRel _ -> false
+    | TSort _ -> false 
+    | TVar _ -> true
+    | TUnop (_, t2) -> var_is_in_term t2
+    | TBinop (_, t2, t3) -> var_is_in_term t2 || var_is_in_term t3
+    | TIfThenElse (p, t2, t3) -> (* a first approximation,, we should detect a variable in p *)
+        true
+    | TCompr _ -> true
 
 
 
@@ -224,68 +224,68 @@ let rec translate_prop gen_env p =
         let j1, tc_set1 =translate_int gen_env ie1 in
         let j2, tc_set2 =translate_int gen_env ie2 in
         let op2=(match op with
-          | Lte -> Lte2 
-		  | Lt -> Lt2
-		  | Gte -> Gte2
-		  | Gt -> Gt2
-		  | Eq ->Eq2 
-		  | Neq -> Neq2) 
+              | Lte -> Lte2 
+              | Lt -> Lt2
+              | Gte -> Gte2
+              | Gt -> Gt2
+              | Eq ->Eq2 
+              | Neq -> Neq2) 
         in
         (Comp2 (op2, j1, j2), TermSet.union tc_set1 tc_set2)
     (* propositional connectives *)
     | True -> (True2, TermSet.empty)
     | False -> (False2, TermSet.empty)
     | Not p -> 
-       let (form, trclos_set) = translate_prop gen_env p in
-       (not2 form, trclos_set) 
+        let (form, trclos_set) = translate_prop gen_env p in
+        (not2 form, trclos_set) 
     | And (p1, p2) ->
-       let (form1, trclos_set1) = translate_prop gen_env p1 in
-       let (form2, trclos_set2) = translate_prop gen_env p2 in
-       (and2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
+        let (form1, trclos_set1) = translate_prop gen_env p1 in
+        let (form2, trclos_set2) = translate_prop gen_env p2 in
+        (and2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
     | Or (p1, p2) ->
-       let (form1, trclos_set1) = translate_prop gen_env p1 in
-       let (form2, trclos_set2) = translate_prop gen_env p2 in
-       (or2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
+        let (form1, trclos_set1) = translate_prop gen_env p1 in
+        let (form2, trclos_set2) = translate_prop gen_env p2 in
+        (or2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
     | Impl (p1, p2) ->
-       let (form1, trclos_set1) = translate_prop gen_env p1 in
-       let (form2, trclos_set2) = translate_prop gen_env p2 in
-       (impl2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
+        let (form1, trclos_set1) = translate_prop gen_env p1 in
+        let (form2, trclos_set2) = translate_prop gen_env p2 in
+        (impl2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
     | Iff (p1, p2) ->
-       let (form1, trclos_set1) = translate_prop gen_env p1 in
-       let (form2, trclos_set2) = translate_prop gen_env p2 in
-       (iff2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
+        let (form1, trclos_set1) = translate_prop gen_env p1 in
+        let (form2, trclos_set2) = translate_prop gen_env p2 in
+        (iff2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
     (* temporal connectives of future *)
     | Next p -> 
-       let (form, trclos_set) = translate_prop gen_env p in
-       (Next2 form, trclos_set)
+        let (form, trclos_set) = translate_prop gen_env p in
+        (Next2 form, trclos_set)
     | Always p -> 
-       let (form, trclos_set) = translate_prop gen_env p in
-       (Always2 form, trclos_set)
+        let (form, trclos_set) = translate_prop gen_env p in
+        (Always2 form, trclos_set)
     | Eventually p -> 
-       let (form, trclos_set) = translate_prop gen_env p in
-       (Eventually2 form, trclos_set)
+        let (form, trclos_set) = translate_prop gen_env p in
+        (Eventually2 form, trclos_set)
     | Until (p1, p2) ->
-       let (form1, trclos_set1) = translate_prop gen_env p1 in
-       let (form2, trclos_set2) = translate_prop gen_env p2 in
-       (Until2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
+        let (form1, trclos_set1) = translate_prop gen_env p1 in
+        let (form2, trclos_set2) = translate_prop gen_env p2 in
+        (Until2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
     | Release (p1, p2) ->
-       let (form1, trclos_set1) = translate_prop gen_env p1 in
-       let (form2, trclos_set2) = translate_prop gen_env p2 in
-       (Until2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
+        let (form1, trclos_set1) = translate_prop gen_env p1 in
+        let (form2, trclos_set2) = translate_prop gen_env p2 in
+        (Until2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
     (* temporal connectives of past *)
     | Previous p ->
-       let (form, trclos_set) = translate_prop gen_env p in
-       (Previous2 form, trclos_set)
+        let (form, trclos_set) = translate_prop gen_env p in
+        (Previous2 form, trclos_set)
     | Hist p ->
-       let (form, trclos_set) = translate_prop gen_env p in
-       (Hist2 form, trclos_set)      
+        let (form, trclos_set) = translate_prop gen_env p in
+        (Hist2 form, trclos_set)      
     | Once p ->
-       let (form, trclos_set) = translate_prop gen_env p in
-       (Once2 form, trclos_set)
+        let (form, trclos_set) = translate_prop gen_env p in
+        (Once2 form, trclos_set)
     | Since (p1, p2) ->
-       let (form1, trclos_set1) = translate_prop gen_env p1 in
-       let (form2, trclos_set2) = translate_prop gen_env p2 in
-       (Since2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
+        let (form1, trclos_set1) = translate_prop gen_env p1 in
+        let (form2, trclos_set2) = translate_prop gen_env p2 in
+        (Since2 (form1, form2), TermSet.union trclos_set1 trclos_set2)
 
     (* quantifiers *)
     | Exists (xs, t, p) -> translate_quantifier gen_env `Exists xs t p
@@ -294,40 +294,40 @@ let rec translate_prop gen_env p =
 (* translate integer terms from K1 to K2 *)
 and translate_int gen_env intk1=
   match intk1 with
-  | IConst i -> (TConst i, TermSet.empty)
-  | IVar x -> failwith ("No integer variable in K2: "^x)
-  | IOp (op, it1, it2) ->
-		let j1, tc1 = translate_int gen_env it1 in
-		let j2, tc2 = translate_int gen_env it2 in
-		let op2=(match op with 
-			|Add -> Add2
-			|Sub -> Sub2)
-		in (TBin(op2, j1, j2), TermSet.union tc1 tc2)
+    | IConst i -> (TConst i, TermSet.empty)
+    | IVar x -> failwith ("No integer variable in K2: "^x)
+    | IOp (op, it1, it2) ->
+        let j1, tc1 = translate_int gen_env it1 in
+        let j2, tc2 = translate_int gen_env it2 in
+        let op2=(match op with 
+              |Add -> Add2
+              |Sub -> Sub2)
+        in (TBin(op2, j1, j2), TermSet.union tc1 tc2)
 
-  | IMult (i,it) -> 
-		let j, tc= translate_int gen_env it in
-		(TMult(i,j), tc)
-  | ICard t -> (* x in prof(t)} *)
-     (* build the list xs of variables according to the profile *)
-     if Union.is_empty t.profile
-     then 
-       failwith ("k1_to_k2.translate_int: profile is empty in a \ 
+    | IMult (i,it) -> 
+        let j, tc= translate_int gen_env it in
+        (TMult(i,j), tc)
+    | ICard t -> (* x in prof(t)} *)
+        (* build the list xs of variables according to the profile *)
+        if Union.is_empty t.profile
+        then 
+          failwith ("k1_to_k2.translate_int: profile is empty in a \ 
                   cardinal term.")
-     else
-       let l = List.length @@ Union.choose t.profile in
-       if Union.exists (fun r -> (List.length r <> l)) t.profile
-       then
-       failwith ("k1_to_k2.translate_int: profile is not coherent in a \ 
+        else
+          let l = List.length @@ Union.choose t.profile in
+          if Union.exists (fun r -> (List.length r <> l)) t.profile
+          then
+            failwith ("k1_to_k2.translate_int: profile is not coherent in a \ 
                   cardinal term.")
-       else
-         let rec produce_fresh_var_list n str =
-           match n with
-           | 0 -> []
-           | _ -> fresh str :: produce_fresh_var_list (n-1) str
-         in
-         let xs = produce_fresh_var_list l "x_card" in
-         let form, tc = is_in gen_env xs t in
-         (TCard (xs, form, t.profile) , tc)
+          else
+            let rec produce_fresh_var_list n str =
+              match n with
+                | 0 -> []
+                | _ -> fresh str :: produce_fresh_var_list (n-1) str
+            in
+            let xs = produce_fresh_var_list l "x_card" in
+            let form, tc = is_in gen_env xs t in
+            (TCard (xs, form, t.profile) , tc)
 
 (* if t1 and t2 are (n-ary products of) variables, we just assert their equality
    pointwise (the default case may result in far more complex formulas) *)
@@ -363,12 +363,12 @@ and translate_in gen_env t1 t2 =
   let ranges =
     t1.profile
     |> Union.filter (fun r1 ->
-                     let lgr1 = List.length r1 in
-                     Union.exists (fun r2 -> List.length r2 = lgr1) t2.profile)
+          let lgr1 = List.length r1 in
+          Union.exists (fun r2 -> List.length r2 = lgr1) t2.profile)
     |> Union.to_list in
   Cfg.print_debug @@
-    Printf.sprintf "\t\t---> computed ranges: %s\n%!"
-                   (ListX.to_string Range.print ranges);
+  Printf.sprintf "\t\t---> computed ranges: %s\n%!"
+    (ListX.to_string Range.print ranges);
   let open List in
   (* are we in the case \vec{x} in t2 or the general t1 in t2? *)
   let make_conjunct = match product_as_list t1 with
@@ -381,12 +381,12 @@ and translate_in gen_env t1 t2 =
         in
         let make_conjunct range =
           (* create fresh variables for sorts; and also take the
-	           static primary signature for variable sorts (cf #467) *)
-	        let new_bindings =
-	          map (fun r -> fresh r, primary_sig_of_if_var_sig gen_env.sigenv r) range in
-	        (* extract the variables just created *)
-	        let xs = fst @@ split new_bindings in
-	        (* create the body and prefix it with a chain of quantifications *)
+             static primary signature for variable sorts (cf #467) *)
+          let new_bindings =
+            map (fun r -> fresh r, primary_sig_of_if_var_sig gen_env.sigenv r) range in
+          (* extract the variables just created *)
+          let xs = fst @@ split new_bindings in
+          (* create the body and prefix it with a chain of quantifications *)
           fold_right (fun (x, s) (r, tc_set) -> (forall2 x s r, tc_set))
             new_bindings (make_body xs (new_bindings @ gen_env.bindings))
         in
@@ -443,7 +443,7 @@ and translate_quantifier gen_env (quant : [< `Forall | `Exists]) xs t p =
   in
   let formula_for_range r =
     (* in case we have quantifications over variable signatures, take
-	     their primary (static) parent signature *)
+       their primary (static) parent signature *)
     let (ys_ss, p2) =
       if lg = 1 then (* no fresh variable to create, no substitution needed *)
         ([(x, primary_sig_of_if_var_sig gen_env.sigenv @@ hd r)], p) 
@@ -457,7 +457,7 @@ and translate_quantifier gen_env (quant : [< `Forall | `Exists]) xs t p =
         (ys_ss, p2)
     in
     let (form_body, tc_set_body) = bodify (ys_ss @ gen_env.bindings) 
-                                          (map fst ys_ss) t p2 
+                                     (map fst ys_ss) t p2 
     in
     (quantify ys_ss form_body, tc_set_body)
   in
@@ -530,8 +530,8 @@ and is_in gen_env xs term =
                    let sx = List.assoc x gen_env.bindings in
                    (* an optimization is possible if... *)
                    if sx = s    (* the sort is the same as that of x *)
-                      && not gen_env.typing (* we are not in the typing predicate *)
-                      && not @@ Profile.is_var gen_env.sigenv s then (* s is not variable *)
+                   && not gen_env.typing (* we are not in the typing predicate *)
+                   && not @@ Profile.is_var gen_env.sigenv s then (* s is not variable *)
                      begin
                        Cfg.print_debug
                        @@ Printf.sprintf "K1_to_k2.is_in: case TSort: \
@@ -671,11 +671,11 @@ and is_in gen_env xs term =
         else
           (* Iterative square with auxiliary relations *)
           let name_of_t =
-	    K1_pretty.simple_string_of_term t
+            K1_pretty.simple_string_of_term t
           in
           let name_of_trclos_t = "_tr_clos_" ^ name_of_t in
           let length_tr_clos =
-	    bound_length_tr_closure gen_env.sigenv t.profile
+            bound_length_tr_closure gen_env.sigenv t.profile
           in
           let prof_tc = tr_clos_profile gen_env.sigenv t.profile length_tr_clos in
           Cfg.print_debug @@ Printf.sprintf "K1_to_k2.is_in: case Trans t\nTerm t = %s , tr closure bound: %d\n"
@@ -727,7 +727,7 @@ and is_in_join gen_env xs t1 t2 =
     (*      (Profile.sort_inter sigenv.sigord last_type1 first_type2) *)
     (* ; *)
     if Profile.sort_inter gen_env.sigenv.sigord last_type1 first_type2
-       && lg_type1 + length type2 = lg_xs + 2 then
+    && lg_type1 + length type2 = lg_xs + 2 then
       let ys, zs = split_at (lg_type1 - 1) xs in
       Some
         (Profile.sort_inter_type gen_env.sigenv.sigord last_type1 first_type2,
@@ -898,21 +898,21 @@ let tcformula_from_term_set ?(typing = false) sigenv ts =
   let gen_env = { typing; sigenv; bindings } in  
   TermSet.fold
     (fun t k2form -> and2 (fst (translate_prop gen_env (tcformula_from_term sigenv t))
-        , k2form))
+                          , k2form))
     ts
     True2  
 
 (* retruns a pair (formula, term_set) from a K1 formula p.  
-  formula is the  K2 translation of p (where transitive closures are replaced 
-  by a fresh relation. 
-  term_set is the set of all terms in p of which the trasitive closure is called. *)
+   formula is the  K2 translation of p (where transitive closures are replaced 
+   by a fresh relation. 
+   term_set is the set of all terms in p of which the trasitive closure is called. *)
 let translate_with_tc_term_set ?(typing = false) sigenv p =
   let bindings = [] in
   let gen_env = { typing; sigenv; bindings } in
   translate_prop gen_env p 
-  
+
 (* tranlates a K1 formula into a K2 formula that includes constraints related 
-  to transitive closures. *)
+   to transitive closures. *)
 let translate ?(typing = false) sigenv p =
   let bindings = [] in
   let gen_env = { typing; sigenv; bindings } in
@@ -920,8 +920,8 @@ let translate ?(typing = false) sigenv p =
   let tc_clos_formula = 
     TermSet.fold
       (fun t k2form -> and2 (fst (translate_prop gen_env 
-             (tcformula_from_term sigenv t))
-          , k2form))
+                                    (tcformula_from_term sigenv t))
+                            , k2form))
       tc_set
       True2
   in
@@ -929,8 +929,8 @@ let translate ?(typing = false) sigenv p =
     formula 
   else
     and2 (formula, tc_clos_formula)
-          
-  
+
+
 
 (***************************** TESTS *****************************)
 
@@ -940,7 +940,7 @@ let translate ?(typing = false) sigenv p =
 (*   let prof1 =  *)
 (*     Profile.Union.add ["s1"; "s1"] (Profile.Union.singleton ["s2"; "s2"])  *)
 (*   in *)
-  
+
 (*   let prof2 = *)
 (*     let open Profile.Union in *)
 (*     singleton ["s2";"s2"] *)
@@ -992,12 +992,12 @@ let translate ?(typing = false) sigenv p =
 (*   let phi2 = translate sigenv phi1 in *)
 (*   PPrintX.print @@ K2PPrint.document_of_prop2 phi2; *)
 (*   print_endline "\n************fin formule de K2************"; *)
-  
+
 (* ************************************** *)  
 (* let () = Cfg.debug := true *)
-    
+
 (*   let s1, s2 = (Names.make "s1", Names.make "s2") *)
-    
+
 
 (*   let prof1 = *)
 (*     let open Profile.Union in *)
@@ -1008,13 +1008,13 @@ let translate ?(typing = false) sigenv p =
 (*     singleton [s1;s2] *)
 (*     |> add [s1;s1] *)
 (*     |> add [s1;s2;s1] *)
-    
+
 (*   let prof3 = *)
 (*     let open Profile.Union in *)
 (*     singleton [s1;s1] *)
 (*       in *)
 (*   let x, y, z, w = (Names.make "x", Names.make "y", Names.make "z", Names.make "w") in *)
-       
+
 (*       let t1 = { *)
 (*     term = TConstRel "P"; *)
 (*     profile = prof1 *)
@@ -1025,7 +1025,7 @@ let translate ?(typing = false) sigenv p =
 (*     profile = prof2 *)
 (*   } *)
 (*   in *)
-    
+
 
 
 (* (\* (\\***************\\) *\) *)
@@ -1038,7 +1038,7 @@ let translate ?(typing = false) sigenv p =
 (*   Printf.eprintf "*** [K1]:\nP = Q\nwith P : %a\nwith Q : %a\n\n%!" *)
 (*     Profile.Union.print prof1 *)
 (*     Profile.Union.print prof2 *)
-  
+
 (* let p1' = translate sigord p1 *)
 
 
@@ -1046,10 +1046,10 @@ let translate ?(typing = false) sigenv p =
 (*   Printf.eprintf "*** [generated K2]:\n"; *)
 (*   PPrintX.eprint @@ K2PPrint.document_of_prop2 p1'; *)
 (*   Printf.eprintf "\n\n" *)
-    
+
 (* (\***************\) *)
 (* let () = reset () *)
-           
+
 (* let p1 =  *)
 (*   Impl (In (t2, t1), In (t1, t2)) *)
 
@@ -1057,7 +1057,7 @@ let translate ?(typing = false) sigenv p =
 (*   Printf.eprintf "*** [K1]:\nQ in P ⇒ P in Q\nwith P : %a\nwith Q : %a\n\n%!" *)
 (*     Profile.Union.print prof1 *)
 (*     Profile.Union.print prof2 *)
-    
+
 (* let p1' = translate sigord p1 *)
 
 
@@ -1065,11 +1065,11 @@ let translate ?(typing = false) sigenv p =
 (*   Printf.eprintf "*** [generated K2]:\n"; *)
 (*   PPrintX.eprint @@ K2PPrint.document_of_prop2 p1'; *)
 (*   Printf.eprintf "\n\n" *)
-    
-    
+
+
 (* (\***************\) *)
 (* (\* let () = reset () *\) *)
-       
+
 (* (\* let t3 = { *\) *)
 (* (\*   term = TBinop (Join, t1, t1); *\) *)
 (* (\*   profile = prof3 *\) *)
@@ -1082,7 +1082,7 @@ let translate ?(typing = false) sigenv p =
 (* (\*   Printf.eprintf "*** [K1]:\nP.P in: %a\nwith Q in : %a\n\n%!" *\) *)
 (* (\*     Profile.Union.print prof3 *\) *)
 (* (\*     Profile.Union.print prof2 *\) *)
-    
+
 (* (\* let p1' = translate sigord p1 *\) *)
 
 
@@ -1090,5 +1090,5 @@ let translate ?(typing = false) sigenv p =
 (* (\*   Printf.eprintf "*** [generated K2]:\n"; *\) *)
 (* (\*   PPrintX.eprint @@ K2PPrint.document_of_prop2 p1'; *\) *)
 (* (\*   Printf.eprintf "\n\n" *\) *)
-    
+
 

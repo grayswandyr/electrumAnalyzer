@@ -57,17 +57,17 @@ let test_translations x =
 
   let sigord = newenv.sigtot in
   let sigmult = sigmult_from_env x (fst sigord) in
-  
+
   let siglist = (List.of_enum (NameMap.keys (fst sigord))) |> 
-    List.filter 
-      (fun s-> is_primary2 sigord s && s <> Names.univ 
-	&& s <> Names.empty) 
+                List.filter 
+                  (fun s-> is_primary2 sigord s && s <> Names.univ 
+                           && s <> Names.empty) 
   in
   let bnds = default_bounds sigmult siglist in
   let mult_of_sigs = sigmult_from_env x (fst sigord) in
   let abstr_sigs = 
     abstract_sigs_from_env x  
-                           (List.of_enum (NameMap.keys (fst sigord))) 
+      (List.of_enum (NameMap.keys (fst sigord))) 
   in
   let sigenv =
     { sigord = sigord;
@@ -88,7 +88,7 @@ let test_translations x =
   Cfg.print_debug @@ Printf.sprintf "\n*** K2 Facts ***\n%s\n"
                        (K2PPrint.k2prop_to_string k2_fact);
   Cfg.print_debug @@ Printf.sprintf "\n*** K2 Facts ***\n%s\n"
-                       (K2PPrint.k2prop_to_string k2_static_fact);	                    
+                       (K2PPrint.k2prop_to_string k2_static_fact);                      
   let ltl_model = K2_to_ltl.translate sigenv k2_model_fact in
   Cfg.print_debug @@ Printf.sprintf "\nLTL model:\n%s\n"
                        (Ltl_to_smv.ltl_to_string ltl_model);
@@ -100,7 +100,7 @@ let test_translations x =
   in
   Cfg.print_debug @@ Printf.sprintf "\n*** [LTL] instance constraints:\n%s\n"
                        (Ltl_to_smv.ltl_to_string inst_constraints)
-  
+
 
 
 let run verbosity prettyprint inclpath infile outfile =
@@ -131,7 +131,7 @@ let run verbosity prettyprint inclpath infile outfile =
         let noext = try chop_extension infile with Invalid_argument _ -> infile in
         basename noext 
       else 
-      	outfile
+        outfile
     in
 
     let ast = Parser_main.parse infile in
@@ -149,8 +149,8 @@ let run verbosity prettyprint inclpath infile outfile =
           if verbosity > 0 then print_endline (envirsig_to_string env);
           Electrum_to_smv.execute verbosity genfile env;
           let secs = Sys.time () in
-         	let intsecs = int_of_float secs in
-         	let m = intsecs / 60 in
+          let intsecs = int_of_float secs in
+          let m = intsecs / 60 in
           let rem = secs -. 60. *. float_of_int m in
           Printf.printf "Done (%dm%3Fs).\n%!" m rem
         ) env
@@ -190,15 +190,15 @@ let outfile =
 let main_term = Term.(pure run $ verbose $ pp $ inclpath $ infile $ outfile)
 
 let third_party_blurb = {| 
-The Electrum Analyzer relies on the following third-party free software, released
-under their respective licence (shown below; see the respective OPAM
-repositories for the full text of the licences):
-  - pprint: CeCILL-C;
-  - menhir generator: Q Public License v1.0 + special exception;
-  - menhirLib: GNU LGPL v2 + special exception;
-  - batteries: GNU LGPL v2.1;
-  - cmdliner: BSD3.
-  |}
+                           The Electrum Analyzer relies on the following third-party free software, released
+                           under their respective licence (shown below; see the respective OPAM
+                           repositories for the full text of the licences):
+                           - pprint: CeCILL-C;
+                           - menhir generator: Q Public License v1.0 + special exception;
+                           - menhirLib: GNU LGPL v2 + special exception;
+                           - batteries: GNU LGPL v2.1;
+                           - cmdliner: BSD3.
+                        |}
 
 let author_blurb = {|
 Julien Brunel, David Chemouil, Denis Kuperberg.

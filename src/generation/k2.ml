@@ -25,7 +25,7 @@
 
 open Batteries
 open Names
-  
+
 module Pred : sig
   type pred = private { 
     pred_name : name; 
@@ -42,14 +42,14 @@ end
   let make pred_name pred_prof = { pred_name; pred_prof }
   (*let pred_of_rel { K1.rel_name; K1.rel_prof } =
     { pred_name = rel_name; 
-      pred_prof = rel_prof }*)
+    pred_prof = rel_prof }*)
 end
 include Pred
 
 type int_op2 =
   | Add2
   | Sub2
-    
+
 type comp_int2 =
   | Lte2 
   | Lt2
@@ -64,11 +64,11 @@ type term2 =
   | TMult of int * term2 
   (*{x in t | x in profile(phi) } *)
   (* In order to count the number of instances of a K1 term t, we use
-  a K2 formula p expressing the membership of a list xs of fresh variables in
-  the K1 term t.  (# t) in K1 is translated into the K2 term TCardrd (xs, p,
-  prof), where prof is the profile of t. During the transformation
-  into LTL, this formula will be instantiated assigning xs to each possible 
-  value following prof. 
+     a K2 formula p expressing the membership of a list xs of fresh variables in
+     the K1 term t.  (# t) in K1 is translated into the K2 term TCardrd (xs, p,
+     prof), where prof is the profile of t. During the transformation
+     into LTL, this formula will be instantiated assigning xs to each possible 
+     value following prof. 
   *) 
   | TCard of (name list) * prop2 * Profile.t
 
@@ -117,7 +117,7 @@ let rec not2 = function
   | Exists2 (x, t, p) -> Forall2 (x, t, not2 p)
   | Forall2 (x, t, p) -> Exists2 (x, t, not2 p)
   | x -> Not2 x
-           
+
 let and2 = function  
   | False2, x | x, False2 -> False2
   | True2, x | x, True2 -> x

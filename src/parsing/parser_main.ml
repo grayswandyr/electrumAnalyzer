@@ -49,10 +49,10 @@ let parse_scan file lexer =
   try
     good (MenhirLib.Convert.Simplified.traditional2revised Parser.file lexer)
   with Parser.Error -> 
-    match Scanner.last_token () with
-      | None -> assert false    (* there's at least EOF *)
-      | Some (t, t_start, t_end) -> syntax_error file t t_start t_end
-   
+  match Scanner.last_token () with
+    | None -> assert false    (* there's at least EOF *)
+    | Some (t, t_start, t_end) -> syntax_error file t t_start t_end
+
 let parse infile =
   let open Faulty.Monad in
   let inchan = File.open_in infile in

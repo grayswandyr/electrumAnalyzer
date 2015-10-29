@@ -26,7 +26,7 @@
 open Batteries
 open Util
 open Names
- 
+
 let fresh, reset =
   let start = (-1) in
   let count = ref start in
@@ -34,10 +34,10 @@ let fresh, reset =
     incr count;
     let v = Printf.sprintf "_%s%s%d" base sep !count in
     (*Cfg.print_debug
-    @@ Printf.sprintf "Fresh.fresh: new variable %s\n%!" v;*)
+      @@ Printf.sprintf "Fresh.fresh: new variable %s\n%!" v;*)
     v
   in
   let r () = count := start
   in
   (Names.make % f, r)
-    
+

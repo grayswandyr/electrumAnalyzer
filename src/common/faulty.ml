@@ -30,7 +30,7 @@
 open Batteries
 
 type ('ok, 'err) faulty = ('ok, 'err * string Lazy.t) result 
-                                
+
 let fail err msg = Bad (err, msg)
 
 let good x = Ok x
@@ -42,13 +42,13 @@ module Monad = struct
   let return = good
   let ( >>= ) = bind
   let lift1 f m= match m with
-	| Ok x -> return (f x)
-	| Bad (err, lazy msg) -> Bad (err, lazy msg) 
+    | Ok x -> return (f x)
+    | Bad (err, lazy msg) -> Bad (err, lazy msg) 
   let lift2 f m n=match m with
-  	| Ok x -> (match n with
-  		| Ok y -> return (f x y)
-		| Bad (err, lazy msg) -> Bad (err, lazy msg))
-	| Bad (err, lazy msg) -> Bad (err, lazy msg) 
+    | Ok x -> (match n with
+          | Ok y -> return (f x y)
+          | Bad (err, lazy msg) -> Bad (err, lazy msg))
+    | Bad (err, lazy msg) -> Bad (err, lazy msg) 
 end
 
 module Infix = struct

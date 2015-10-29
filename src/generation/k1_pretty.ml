@@ -144,7 +144,7 @@ and document_of_quant quant xs t p =
       ]
   in
   prefix tabsize 1 pref (document_of_prop p |> brackets)
-    
+
 and document_of_prop = function
   | Equal (t1, t2) -> 
       flow space [ document_of_term t1; equals; document_of_term t2 ]
@@ -155,8 +155,8 @@ and document_of_prop = function
   | Comp (comp, t1, t2) -> 
       flow space [
         document_of_iexpr t1; 
-				document_of_comp_int comp;
-			  document_of_iexpr t2
+        document_of_comp_int comp;
+        document_of_iexpr t2
       ]
       |> parens
   | True -> s_true

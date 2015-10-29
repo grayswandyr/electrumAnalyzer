@@ -24,7 +24,7 @@
  ******************************************************************************)
 
 type sig_ext = Extends of Ast_qname.t | In of Ast_qname.t list
-                   
+
 type signature = {
   is_variable : bool;
   is_abstract : bool;
@@ -43,19 +43,19 @@ val make_signature :
   extends:sig_ext option ->
   fields:Ast_expr.decl list ->
   fact:Ast_expr.block option -> signature
-  
+
 type enum = { name : Ast_ident.t; cases : Ast_ident.t list; }
-            
+
 val make_enum : name:Ast_ident.t -> cases:Ast_ident.t list -> enum
-  
+
 type fact = {
   name : Ast_ident.t option;
   body : Ast_expr.block;
 }
-              
+
 val make_fact :
   name:Ast_ident.t option -> body:Ast_expr.block -> fact
-                                       
+
 type pred = {
   name : Ast_ident.t;
   params : Ast_expr.decl list;
@@ -66,7 +66,7 @@ val make_pred :
   name:Ast_ident.t ->
   params:Ast_expr.decl list ->
   body:Ast_expr.block -> pred
-  
+
 type func = {
   name : Ast_ident.t;
   params : Ast_expr.decl list;
@@ -79,7 +79,7 @@ val make_func :
   params:Ast_expr.decl list ->
   returns:Ast_expr.expr ->
   body:Ast_expr.expr -> func
-  
+
 type assertion = {
   name : Ast_ident.t option;
   body : Ast_expr.block;
@@ -87,7 +87,7 @@ type assertion = {
 
 val make_assertion :
   name:Ast_ident.t option -> body:Ast_expr.block -> assertion
-  
+
 type paragraph =
     Sig of signature
   | Enum of enum

@@ -26,7 +26,7 @@
 (* names.ml - names handling common to several phases of compilation *)
 
 open Batteries
-    
+
 type name = string
 
 let univ = "univ"

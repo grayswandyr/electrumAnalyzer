@@ -35,7 +35,7 @@ let ifthen c t x = ifthenelse c t ignore x
 
 module PPrintX = struct
   open PPrint
-      
+
   let to_string ?(ribbon=0.95) ?(width=80) doc =
     let buf = Legacy.Buffer.create 100 in
     ToBuffer.pretty ribbon width buf doc;

@@ -24,7 +24,7 @@
  ******************************************************************************)
 
 open Batteries
-    
+
 type name = string
 
 val univ : name
@@ -36,5 +36,5 @@ val int : name
 val ident: name
 
 val make : string -> name
-  
+
 val compare : name -> name -> int

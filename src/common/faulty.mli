@@ -30,7 +30,7 @@
 (* a computation that may fail is a particular sort of result
    where the Bad case contains and error as defined above *)
 type ('ok, 'err) faulty = ('ok, 'err * string Lazy.t) Batteries.Result.t
-                                
+
 val fail : ([>  ] as 'err) -> string Lazy.t -> ('ok, 'err) faulty
 
 val good : 'a -> ('a, _) faulty
