@@ -4,8 +4,8 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
- *   Julien Brunel <julien DOT brunel AT onera DOT fr>
+ *   David Chemouil 
+ *   Julien Brunel 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -50,14 +50,14 @@ let execute verbosity outfile env =
       Printf.printf "\n*** [K1] Phi Model ***\n%s\n" phi_string;
       Printf.printf "\n*** [K1] Phi typing ***\n%s\n" phi_st_typ;
       Printf.printf "\n*** [K1] Phi static facts ***\n%s\n" 
-                    (string_of_prop k1_static_facts);
+        (string_of_prop k1_static_facts);
       Printf.printf "\n*** [K1] Phi non static facts ***\n%s\n" 
-                    (string_of_prop k1_dyn_facts);
+        (string_of_prop k1_dyn_facts);
       Printf.printf "\n*** [K1] Phi local facts ***\n%s\n" 
-                    (string_of_prop locfacts);
+        (string_of_prop locfacts);
       Printf.printf "%s" (string_asserts env)
     end;
-  
+
   let sigord = Elec_to_k1.(newenv.sigtot) in  
   let siglist = List.of_enum (NameMap.keys (fst sigord)) in
   let sigmult = sigmult_from_env env (fst sigord) in
@@ -72,14 +72,14 @@ let execute verbosity outfile env =
       sigord = sigord; 
       sigbounds = bnd;
       sigmult = sigmult;
-        abstract_sigs = abstract_sigs;
+      abstract_sigs = abstract_sigs;
     } in
     Cfg.print_debug @@
-      (string_of_int @@ NameMap.cardinal (fst sigenv.sigord))
-      ^ " entries in sigord\n and "
-      ^(string_of_int @@ NameMap.cardinal sigenv.sigmult)
-      ^ " entries in sigmult\n";
-        
+    (string_of_int @@ NameMap.cardinal (fst sigenv.sigord))
+    ^ " entries in sigord\n and "
+    ^(string_of_int @@ NameMap.cardinal sigenv.sigmult)
+    ^ " entries in sigmult\n";
+
     (* producing K2 *)
     let open K1_to_k2 in
     let k2_model, tc_set_model = 
@@ -177,4 +177,4 @@ let execute verbosity outfile env =
   in
   generate true @@ list_of_check_formulas_and_bounds env sigord sigmult abstract_sigs;
   generate false @@ list_of_run_formulas_and_bounds env sigord sigmult abstract_sigs
-  
+

@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -24,18 +24,18 @@
  ******************************************************************************)
 
 type module_decl = Ast_qname.t * Ast_qname.t list 
-            
+
 val make_module_decl :
   module_name:Ast_qname.t -> params:Ast_qname.t list -> module_decl
-                    
+
 type import = Ast_qname.t * Ast_qname.t list * Ast_ident.t option
 
 val make_import :
   module_name:Ast_qname.t -> params:Ast_qname.t list ->
   pun:Ast_ident.t option -> import
-          
+
 type par_cmd = Par of Ast_par.paragraph | Cmd of Ast_ctrl.cmd
-                                                   
+
 type file = module_decl option * import list * par_cmd list
 
 (* commands are not typechecked for now *)

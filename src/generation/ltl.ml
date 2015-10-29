@@ -1,11 +1,11 @@
 (*******************************************************************************
- * Time-stamp: <2015-03-05 CET 15:46:05 David Chemouil>
+ * Time-stamp: <2015-10-29 CET 09:40:39 David Chemouil>
  * 
  * Electrum Analyzer 
- * Copyright (C) 2014-2015 Onera
+ * Copyright (C) 2014-2015 Onera, (C) 2015 IRIT
  * Authors: 
- *   Denis Kuperberg <denis DOT kuperberg AT gmail DOT com>
- *   Julien Brunel <julien DOT brunel AT onera DOT fr>
+ *   Denis Kuperberg 
+ *   Julien Brunel 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -80,7 +80,7 @@ let rec ltlnot = function
   | LOr (p1, p2) -> LAnd (ltlnot p1, ltlnot p2)
   | LImpl (p1, p2) -> LAnd (p1, ltlnot p2)
   | x -> LNot x
-           
+
 let ltland = function
   | LFalse, x | x, LFalse -> LFalse
   | LTrue, x | x, LTrue -> x
@@ -96,28 +96,28 @@ let ltlor = function
 
 let rec limpl product =
   match product with
-  | LTrue, LTrue -> LTrue
-  | LFalse, x -> LTrue
-  | x, LTrue -> LTrue
-  | x, LFalse -> ltlnot x
-  | LTrue, x -> x
-  | x, y when x = y -> LTrue
-  | x, LNot y when x = y -> ltlnot y 
-  | LAnd (x, y), z when x = z -> LTrue
-  | LAnd (x, y), z  when y = z -> LTrue 
-  | LAnd (x,y), LNot z when x = z -> limpl (y, ltlnot z)
-  | x, LImpl (y,z) -> limpl (ltland (x, y), z) 
-  | x, y -> LImpl (x, y)
+    | LTrue, LTrue -> LTrue
+    | LFalse, x -> LTrue
+    | x, LTrue -> LTrue
+    | x, LFalse -> ltlnot x
+    | LTrue, x -> x
+    | x, y when x = y -> LTrue
+    | x, LNot y when x = y -> ltlnot y 
+    | LAnd (x, y), z when x = z -> LTrue
+    | LAnd (x, y), z  when y = z -> LTrue 
+    | LAnd (x,y), LNot z when x = z -> limpl (y, ltlnot z)
+    | x, LImpl (y,z) -> limpl (ltland (x, y), z) 
+    | x, y -> LImpl (x, y)
 
 and lequiv product =
   match product with
-  | LTrue, LTrue -> LTrue
-  | LFalse, LFalse -> LTrue
-  | x, LTrue | LTrue, x -> x
-  | x, LFalse | LFalse, x -> ltlnot x
-  | x, y when x = y -> LTrue
-  | x, y -> LEquiv (x, y)
-    
+    | LTrue, LTrue -> LTrue
+    | LFalse, LFalse -> LTrue
+    | x, LTrue | LTrue, x -> x
+    | x, LFalse | LFalse, x -> ltlnot x
+    | x, y when x = y -> LTrue
+    | x, y -> LEquiv (x, y)
+
 (* and simplify formula =  *)
 (*   match formula with *)
 (*   | LNot x -> ltlnot x *)
@@ -131,69 +131,69 @@ and lequiv product =
 *)
 let rec replace formula str1 str2 =
   match formula with 
-  | LAtom n -> LAtom (Str.global_replace (Str.regexp str1) str2 n)
-  | LConstAtom n -> LConstAtom (Str.global_replace (Str.regexp str1) str2 n) 
-  | LNot x -> ltlnot (replace x str1 str2)
-  | LFalse -> LTrue
-  | LTrue -> LFalse
-  | LComp (c, t1, t2) -> print_endline "Warning : Ltl.replace: integer comparison not handled yet"; LComp (c, t1, t2)
-  | LAnd (p1, p2) -> ltland (replace p1 str1 str2, replace p2 str1 str2)
-  | LOr (p1, p2) -> ltlor (replace p1 str1 str2, replace p2 str2 str2)
-  | LImpl (p1, p2) -> limpl (replace p1 str1 str2, replace p2 str1 str2)
-  | LEquiv (p1, p2) -> lequiv (replace p1 str1 str2, replace p2 str1 str2)
-  | LNext p -> LNext (replace p str1 str2)
-  | LAlways p ->  LAlways (replace p str1 str2)
-  | LEventually p ->  LEventually (replace p str1 str2)
-  | LUntil (p1, p2) -> LUntil (replace p1 str1 str2, replace p2 str1 str2)
-  | LRelease (p1, p2) -> LRelease (replace p1 str1 str2, replace p2 str1 str2)
-  | LPrevious p -> LPrevious (replace p str1 str2)
-  | LHist p -> LHist (replace p str1 str2)
-  | LOnce p -> LOnce (replace p str1 str2)
-  | LSince (p1, p2) -> LSince (replace p1 str1 str2, replace p2 str1 str2)
-                              
+    | LAtom n -> LAtom (Str.global_replace (Str.regexp str1) str2 n)
+    | LConstAtom n -> LConstAtom (Str.global_replace (Str.regexp str1) str2 n) 
+    | LNot x -> ltlnot (replace x str1 str2)
+    | LFalse -> LTrue
+    | LTrue -> LFalse
+    | LComp (c, t1, t2) -> print_endline "Warning : Ltl.replace: integer comparison not handled yet"; LComp (c, t1, t2)
+    | LAnd (p1, p2) -> ltland (replace p1 str1 str2, replace p2 str1 str2)
+    | LOr (p1, p2) -> ltlor (replace p1 str1 str2, replace p2 str2 str2)
+    | LImpl (p1, p2) -> limpl (replace p1 str1 str2, replace p2 str1 str2)
+    | LEquiv (p1, p2) -> lequiv (replace p1 str1 str2, replace p2 str1 str2)
+    | LNext p -> LNext (replace p str1 str2)
+    | LAlways p ->  LAlways (replace p str1 str2)
+    | LEventually p ->  LEventually (replace p str1 str2)
+    | LUntil (p1, p2) -> LUntil (replace p1 str1 str2, replace p2 str1 str2)
+    | LRelease (p1, p2) -> LRelease (replace p1 str1 str2, replace p2 str1 str2)
+    | LPrevious p -> LPrevious (replace p str1 str2)
+    | LHist p -> LHist (replace p str1 str2)
+    | LOnce p -> LOnce (replace p str1 str2)
+    | LSince (p1, p2) -> LSince (replace p1 str1 str2, replace p2 str1 str2)
+
 (* idem as replace, but for lists of strings *)
 let rec replace_list formula str_list1 str_list2 =
   match formula with
-  | LAtom n -> 
-     let f acc s1 s2 =
-       Str.global_replace (Str.regexp s1) s2 acc
-     in
-     let new_name = 
-       List.fold_left2 f n str_list1 str_list2 
-     in  
-     LAtom (new_name)
-  | LConstAtom n -> 
-     let f acc s1 s2 =
-       Str.global_replace (Str.regexp s1) s2 acc
-     in
-     let new_name = 
-       List.fold_left2 f n str_list1 str_list2 
-     in  
-     LConstAtom (new_name)
-  | LNot x -> ltlnot (replace_list x str_list1 str_list2)
-  | LFalse -> LTrue
-  | LTrue -> LFalse
-  | LComp (c, t1, t2) -> LComp (c, t1 , t2) (* TODO *)
-  | LAnd (p1, p2) -> ltland (replace_list p1 str_list1 str_list2, 
-                             replace_list p2 str_list1 str_list2)
-  | LOr (p1, p2) -> ltlor (replace_list p1 str_list1 str_list2, 
-                           replace_list p2 str_list2 str_list2)
-  | LImpl (p1, p2) -> limpl (replace_list p1 str_list1 str_list2, 
-                             replace_list p2 str_list1 str_list2)
-  | LEquiv (p1, p2) -> lequiv (replace_list p1 str_list1 str_list2, 
+    | LAtom n -> 
+        let f acc s1 s2 =
+          Str.global_replace (Str.regexp s1) s2 acc
+        in
+        let new_name = 
+          List.fold_left2 f n str_list1 str_list2 
+        in  
+        LAtom (new_name)
+    | LConstAtom n -> 
+        let f acc s1 s2 =
+          Str.global_replace (Str.regexp s1) s2 acc
+        in
+        let new_name = 
+          List.fold_left2 f n str_list1 str_list2 
+        in  
+        LConstAtom (new_name)
+    | LNot x -> ltlnot (replace_list x str_list1 str_list2)
+    | LFalse -> LTrue
+    | LTrue -> LFalse
+    | LComp (c, t1, t2) -> LComp (c, t1 , t2) (* TODO *)
+    | LAnd (p1, p2) -> ltland (replace_list p1 str_list1 str_list2, 
                                replace_list p2 str_list1 str_list2)
-  | LNext p -> LNext (replace_list p str_list1 str_list2)
-  | LAlways p ->  LAlways (replace_list p str_list1 str_list2)
-  | LEventually p ->  LEventually (replace_list p str_list1 str_list2)
-  | LUntil (p1, p2) -> LUntil (replace_list p2 str_list1 str_list2, 
+    | LOr (p1, p2) -> ltlor (replace_list p1 str_list1 str_list2, 
+                             replace_list p2 str_list2 str_list2)
+    | LImpl (p1, p2) -> limpl (replace_list p1 str_list1 str_list2, 
                                replace_list p2 str_list1 str_list2)
-  | LRelease (p1, p2) -> LRelease (replace_list p2 str_list1 str_list2, 
-                                   replace_list p2 str_list1 str_list2)
-  | LPrevious p -> LPrevious (replace_list p str_list1 str_list2)
-  | LHist p -> LHist (replace_list p str_list1 str_list2)
-  | LOnce p -> LOnce (replace_list p str_list1 str_list2)
-  | LSince (p1, p2) -> LSince (replace_list p1 str_list1 str_list2, 
-                               replace_list p2 str_list1 str_list2)
-     
+    | LEquiv (p1, p2) -> lequiv (replace_list p1 str_list1 str_list2, 
+                                 replace_list p2 str_list1 str_list2)
+    | LNext p -> LNext (replace_list p str_list1 str_list2)
+    | LAlways p ->  LAlways (replace_list p str_list1 str_list2)
+    | LEventually p ->  LEventually (replace_list p str_list1 str_list2)
+    | LUntil (p1, p2) -> LUntil (replace_list p2 str_list1 str_list2, 
+                                 replace_list p2 str_list1 str_list2)
+    | LRelease (p1, p2) -> LRelease (replace_list p2 str_list1 str_list2, 
+                                     replace_list p2 str_list1 str_list2)
+    | LPrevious p -> LPrevious (replace_list p str_list1 str_list2)
+    | LHist p -> LHist (replace_list p str_list1 str_list2)
+    | LOnce p -> LOnce (replace_list p str_list1 str_list2)
+    | LSince (p1, p2) -> LSince (replace_list p1 str_list1 str_list2, 
+                                 replace_list p2 str_list1 str_list2)
+
 
 

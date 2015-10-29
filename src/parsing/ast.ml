@@ -4,7 +4,7 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -29,7 +29,7 @@
 
 open Batteries
 open List
-    
+
 module Ident = Ast_ident
 module Qname = Ast_qname
 module Expr = Ast_expr
@@ -40,7 +40,7 @@ module File = Ast_file
 
 module Alpha = struct
   open Ast_expr
-    
+
   let fresh, reset =
     let start = (-1) in
     let count = ref start in
@@ -56,7 +56,7 @@ module Alpha = struct
     Ast_ident.to_string id
     |> fresh
     |> Ast_ident.make
-  
+
   let fresh_qname qn =
     Ast_qname.to_string qn
     |> fresh
@@ -75,10 +75,10 @@ module Alpha = struct
   let print_renaming ren =
     map (fun (x, y) -> (Ast_ident.to_string x, Ast_ident.to_string y)) ren |>
     Util.ListX.to_string (Tuple2.print String.print String.print)
-  
+
   (* poor man's state monad *)
   let return env data = (env, data)
-  
+
   let rec rename (module_decl, imports, par_cmds) =
     (module_decl, imports, map rename_par par_cmds)
 
@@ -87,14 +87,14 @@ module Alpha = struct
     let open Ast_par in
     match poc with
       | Par Pred f -> 
-			let (env, pars)= refresh_decls [] f.params in
-			Par (Pred { f with params=pars;
-					body = rename_block env f.body })
+          let (env, pars)= refresh_decls [] f.params in
+          Par (Pred { f with params=pars;
+                             body = rename_block env f.body })
       | Par Fun f -> 
-			let (env, pars)= refresh_decls [] f.params in
-			Par (Fun { f with params=pars;
-					returns = rename_expr env f.returns;
-					body = rename_expr env f.body })
+          let (env, pars)= refresh_decls [] f.params in
+          Par (Fun { f with params=pars;
+                            returns = rename_expr env f.returns;
+                            body = rename_expr env f.body })
       | Par Fact f -> Par (Fact { f with body = rename_block [] f.body} )
       | Par Assert f -> Par (Assert { f with body = rename_block [] f.body} )
       | _ -> poc
@@ -174,69 +174,69 @@ end
 
 
 module Hull = struct 
-open Ast_file
-open Ast_par
+  open Ast_file
+  open Ast_par
 
-let hull = "_Hull"
+  let hull = "_Hull"
 
-let to_hull id = Ast_ident.make @@ hull ^ "_" ^ Ast_ident.to_string id
+  let to_hull id = Ast_ident.make @@ hull ^ "_" ^ Ast_ident.to_string id
 
-let is_hull s = Str.string_match (Str.regexp hull) s 0
+  let is_hull s = Str.string_match (Str.regexp hull) s 0
 
-let from_hull s = Str.string_after s (1+String.length hull)
-
-
-(* returns the signature that is the hull of the signature of name sig_name *) 
-let hull_of_sig sig_name =
-  {
-    is_variable = false;
-    is_abstract = false;
-    mult = None;
-    names = [to_hull sig_name];
-    extends = None;
-    fields = [];
-    fact = None;
-  }
+  let from_hull s = Str.string_after s (1+String.length hull)
 
 
-(* if several (primary and variable) signarues are defined simmultaneously 
-   (a signature with multiple  names), this function returns a list of 
-   signatures, each  with a single name, and their hull signature, as a list of 
-   Ast_file.par_cmd.
-*)      
-let unfold_signature s = 
-  (* auxiliary function *)
-  let rec unfold_sig s (name_list: Ast_ident.t list) =
-    match name_list with
-    | n :: tl -> 
-       let hs = hull_of_sig (n) in
-       let new_s = { s with names = [n]; 
-			    extends =Some (Extends (Ast_qname.make ~this:false ~path:[] ~name:(to_hull (n)))) ;
-		   } 
-       in
-       Par (Sig hs) :: (Par (Sig new_s) :: unfold_sig s tl)
-    | [] ->[] 
-  in 
-  
-  if s.is_variable && s.extends = None 
-  then
-    unfold_sig s s.names
-  else
-    [Par (Sig s)]
-  
-let rec add_hull_in_par par_cmd_list =
-  match par_cmd_list with
-  | [] -> []
-  | Cmd c :: tl ->  Cmd c :: add_hull_in_par tl
-  | Par (Sig s) :: tl -> 
-     let unfold_s = unfold_signature s in
-     unfold_s @ (add_hull_in_par tl)
-  | Par p :: tl -> (Par p) :: add_hull_in_par tl
+  (* returns the signature that is the hull of the signature of name sig_name *) 
+  let hull_of_sig sig_name =
+    {
+      is_variable = false;
+      is_abstract = false;
+      mult = None;
+      names = [to_hull sig_name];
+      extends = None;
+      fields = [];
+      fact = None;
+    }
 
 
-let add_hull file =
-  match file with
-  | m, i, par_cmd_list -> m, i,
-     add_hull_in_par par_cmd_list
+  (* if several (primary and variable) signarues are defined simmultaneously 
+     (a signature with multiple  names), this function returns a list of 
+     signatures, each  with a single name, and their hull signature, as a list of 
+     Ast_file.par_cmd.
+  *)      
+  let unfold_signature s = 
+    (* auxiliary function *)
+    let rec unfold_sig s (name_list: Ast_ident.t list) =
+      match name_list with
+        | n :: tl -> 
+            let hs = hull_of_sig (n) in
+            let new_s = { s with names = [n]; 
+                                 extends =Some (Extends (Ast_qname.make ~this:false ~path:[] ~name:(to_hull (n)))) ;
+                        } 
+            in
+            Par (Sig hs) :: (Par (Sig new_s) :: unfold_sig s tl)
+        | [] ->[] 
+    in 
+
+    if s.is_variable && s.extends = None 
+    then
+      unfold_sig s s.names
+    else
+      [Par (Sig s)]
+
+  let rec add_hull_in_par par_cmd_list =
+    match par_cmd_list with
+      | [] -> []
+      | Cmd c :: tl ->  Cmd c :: add_hull_in_par tl
+      | Par (Sig s) :: tl -> 
+          let unfold_s = unfold_signature s in
+          unfold_s @ (add_hull_in_par tl)
+      | Par p :: tl -> (Par p) :: add_hull_in_par tl
+
+
+  let add_hull file =
+    match file with
+      | m, i, par_cmd_list -> m, i,
+                              add_hull_in_par par_cmd_list
 
 end

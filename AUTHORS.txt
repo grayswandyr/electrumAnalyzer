@@ -1,15 +1,16 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 9b8c66fc5522d07fc90ce2cc588096b6) *)
+(* DO NOT EDIT (digest: 2a4ab8ef8b01b85372546f1232b294c7) *)
 
-Authors of electrum-analyzer:
+Authors of Electrum Analyzer:
 
 * David Chemouil
 * Julien Brunel
 * Denis Kuperberg
 
-Current maintainers of electrum-analyzer:
+Current maintainers of Electrum Analyzer:
 
 * david.chemouil+electrum@onera.fr
+* julien.brunel+electrum@onera.fr
 
 (* OASIS_STOP *)
 

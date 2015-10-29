@@ -1,10 +1,10 @@
 (*****************************************************************************
- * Time-stamp: <2015-07-28 CEST 17:23:39 David Chemouil>
+ * Time-stamp: <2015-10-29 CET 09:41:27 David Chemouil>
  *
  * Electrum Analyzer 
- * Copyright (C) 2014-2015 Onera
+ * Copyright (C) 2014-2015 Onera; (C) 2015 IRIT
  * Authors: 
- *   
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -57,17 +57,17 @@ let test_translations x =
 
   let sigord = newenv.sigtot in
   let sigmult = sigmult_from_env x (fst sigord) in
-  
+
   let siglist = (List.of_enum (NameMap.keys (fst sigord))) |> 
-    List.filter 
-      (fun s-> is_primary2 sigord s && s <> Names.univ 
-	&& s <> Names.empty) 
+                List.filter 
+                  (fun s-> is_primary2 sigord s && s <> Names.univ 
+                           && s <> Names.empty) 
   in
   let bnds = default_bounds sigmult siglist in
   let mult_of_sigs = sigmult_from_env x (fst sigord) in
   let abstr_sigs = 
     abstract_sigs_from_env x  
-                           (List.of_enum (NameMap.keys (fst sigord))) 
+      (List.of_enum (NameMap.keys (fst sigord))) 
   in
   let sigenv =
     { sigord = sigord;
@@ -88,7 +88,7 @@ let test_translations x =
   Cfg.print_debug @@ Printf.sprintf "\n*** K2 Facts ***\n%s\n"
                        (K2PPrint.k2prop_to_string k2_fact);
   Cfg.print_debug @@ Printf.sprintf "\n*** K2 Facts ***\n%s\n"
-                       (K2PPrint.k2prop_to_string k2_static_fact);	                    
+                       (K2PPrint.k2prop_to_string k2_static_fact);                      
   let ltl_model = K2_to_ltl.translate sigenv k2_model_fact in
   Cfg.print_debug @@ Printf.sprintf "\nLTL model:\n%s\n"
                        (Ltl_to_smv.ltl_to_string ltl_model);
@@ -100,7 +100,7 @@ let test_translations x =
   in
   Cfg.print_debug @@ Printf.sprintf "\n*** [LTL] instance constraints:\n%s\n"
                        (Ltl_to_smv.ltl_to_string inst_constraints)
-  
+
 
 
 let run verbosity prettyprint inclpath infile outfile =
@@ -114,8 +114,8 @@ let run verbosity prettyprint inclpath infile outfile =
     Cfg.alloyfolder := inclpath ^ "/";
 
     Printf.printf
-      "%s v%s (build: %s).\n\
-       Copyright (c) 2014-2015 Onera.\n\
+      "%s %s (%s).\n\
+       (C) 2014-2015 Onera, (C) 2015 IRIT.\n\
        Released under the GNU GPL 3.0 or later WITHOUT ANY WARRANTY.\n\
        The %s relies on third-party free software.\n\
        Please use the --help option for more information.\n%!"
@@ -131,7 +131,7 @@ let run verbosity prettyprint inclpath infile outfile =
         let noext = try chop_extension infile with Invalid_argument _ -> infile in
         basename noext 
       else 
-      	outfile
+        outfile
     in
 
     let ast = Parser_main.parse infile in
@@ -149,8 +149,8 @@ let run verbosity prettyprint inclpath infile outfile =
           if verbosity > 0 then print_endline (envirsig_to_string env);
           Electrum_to_smv.execute verbosity genfile env;
           let secs = Sys.time () in
-         	let intsecs = int_of_float secs in
-         	let m = intsecs / 60 in
+          let intsecs = int_of_float secs in
+          let m = intsecs / 60 in
           let rem = secs -. 60. *. float_of_int m in
           Printf.printf "Done (%dm%3Fs).\n%!" m rem
         ) env
@@ -190,15 +190,15 @@ let outfile =
 let main_term = Term.(pure run $ verbose $ pp $ inclpath $ infile $ outfile)
 
 let third_party_blurb = {| 
-The Electrum Analyzer relies on the following third-party free software, released
-under their respective licence (shown below; see the respective OPAM
-repositories for the full text of the licences):
-  - pprint: CeCILL-C;
-  - menhir generator: Q Public License v1.0 + special exception;
-  - menhirLib: GNU LGPL v2 + special exception;
-  - batteries: GNU LGPL v2.1;
-  - cmdliner: BSD3.
-  |}
+                           The Electrum Analyzer relies on the following third-party free software, released
+                           under their respective licence (shown below; see the respective OPAM
+                           repositories for the full text of the licences):
+                           - pprint: CeCILL-C;
+                           - menhir generator: Q Public License v1.0 + special exception;
+                           - menhirLib: GNU LGPL v2 + special exception;
+                           - batteries: GNU LGPL v2.1;
+                           - cmdliner: BSD3.
+                        |}
 
 let author_blurb = {|
 Julien Brunel, David Chemouil, Denis Kuperberg.
@@ -210,7 +210,7 @@ let main_info =
               `P "Report issues at \
                   <https://forge.onera.fr/projects/electrum/issues/new>.";
               `S "COPYRIGHT";
-              `P "Electrum Analyzer (c) 2014-2015 Onera";
+              `P "Electrum Analyzer (C) 2014-2015 Onera, (C) 2015 IRIT";
               `P "The Electrum Analyzer is free software: you can redistribute \
                   it and/or modify it under the terms of the GNU General \
                   Public License as published by the Free Software Foundation, \

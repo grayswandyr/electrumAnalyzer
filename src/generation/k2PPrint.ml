@@ -2,8 +2,8 @@
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera
  * Authors: 
- *   Julien Brunel <julien DOT brunel AT onera DOT fr>
- *   David Chemouil <david DOT chemouil AT onera DOT fr>
+ *   Julien Brunel 
+ *   David Chemouil 
  * 
  * This file is part of the Electrum Analyzer.
  * 
@@ -91,7 +91,7 @@ let rec document_of_term2 term = match term with
       (*   document_of_int_op2 iop2; *)
       (*   document_of_term2 t2 *)
       (* ] |> parens *)
-      
+
       infix tabsize 1
         (document_of_int_op2 iop2) (document_of_term2 t1) (document_of_term2 t2)
       |> parens
@@ -102,15 +102,15 @@ let rec document_of_term2 term = match term with
         document_of_term2 term
       ] |> parens
   | TCard (nlist, p, prof) ->
-     flow comma
-          [(flow_map space 
-              string 
-              nlist
-           );
-           document_of_prop2 p;
-          ]
-     |> braces
-     |> precede sharp
+      flow comma
+        [(flow_map space 
+            string 
+            nlist
+         );
+         document_of_prop2 p;
+        ]
+      |> braces
+      |> precede sharp
 
 and document_of_prop2_binop p1 p2 op =
   parens @@ infix tabsize 1 op (document_of_prop2 p1) (document_of_prop2 p2)
@@ -127,7 +127,7 @@ and document_of_quant quant x s prop =
       ]
   in
   prefix tabsize 1 pref (document_of_prop2 prop |> brackets)
-    
+
 and document_of_prop2 prop = match prop with
   | True2 -> s_true
   | False2 -> s_false
@@ -136,8 +136,8 @@ and document_of_prop2 prop = match prop with
   | Comp2 (compint , t1 , t2) ->
       flow space [
         document_of_term2 t1; 
-				document_of_comp_int2 compint;
-			  document_of_term2 t2
+        document_of_comp_int2 compint;
+        document_of_term2 t2
       ]
   | ConstPred2 (p , nlist) ->
       (string "CONST")^^ 
@@ -145,7 +145,7 @@ and document_of_prop2 prop = match prop with
       ^^ surround_separate_map 2 0
            empty lparen (comma ^^ space) rparen string nlist
   | VarPred2 (p , nlist) -> 
-     (string "VAR") ^^
+      (string "VAR") ^^
       document_of_pred p
       ^^ surround_separate_map 2 0
            empty lparen (comma ^^ space) rparen string nlist
