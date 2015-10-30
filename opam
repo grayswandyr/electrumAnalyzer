@@ -15,7 +15,8 @@ build: [
 ]
 install: [make "install"]
 remove: [
-  ["ocamlfind" "remove" "electrumAnalyzer"]
+  ["./configure" "--prefix=%{prefix}%"]
+  [make "uninstall"]
 ]
 depends: [
   "batteries" {build}
