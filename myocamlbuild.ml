@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: e6331f9f8dfce7557afa1e2b2def9991) *)
+(* DO NOT EDIT (digest: 6271f6f50a8e97f264c3b487ae477930) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -611,16 +611,11 @@ let package_default =
      lib_c = [];
      flags =
        [
-          (["oasis_executable_electrum_native"; "ocaml"; "link"; "native"],
-            [
-               (OASISExpr.EBool true, S []);
-               (OASISExpr.EFlag "profiling", S [A "-p"]);
-               (OASISExpr.EFlag "warnings", S [A "-w"; A "A"]);
-               (OASISExpr.EAnd
-                  (OASISExpr.EFlag "warnings", OASISExpr.EFlag "profiling"),
-                 S [A "-w"; A "A"; A "-p"])
-            ]);
-          (["oasis_executable_electrum_native"; "ocaml"; "ocamldep"; "native"
+          ([
+              "oasis_executable_electrumanalyzer_native";
+              "ocaml";
+              "link";
+              "native"
            ],
             [
                (OASISExpr.EBool true, S []);
@@ -630,7 +625,26 @@ let package_default =
                   (OASISExpr.EFlag "warnings", OASISExpr.EFlag "profiling"),
                  S [A "-w"; A "A"; A "-p"])
             ]);
-          (["oasis_executable_electrum_native"; "ocaml"; "compile"; "native"],
+          ([
+              "oasis_executable_electrumanalyzer_native";
+              "ocaml";
+              "ocamldep";
+              "native"
+           ],
+            [
+               (OASISExpr.EBool true, S []);
+               (OASISExpr.EFlag "profiling", S [A "-p"]);
+               (OASISExpr.EFlag "warnings", S [A "-w"; A "A"]);
+               (OASISExpr.EAnd
+                  (OASISExpr.EFlag "warnings", OASISExpr.EFlag "profiling"),
+                 S [A "-w"; A "A"; A "-p"])
+            ]);
+          ([
+              "oasis_executable_electrumanalyzer_native";
+              "ocaml";
+              "compile";
+              "native"
+           ],
             [
                (OASISExpr.EBool true, S []);
                (OASISExpr.EFlag "profiling", S [A "-p"]);
@@ -648,7 +662,7 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 652 "myocamlbuild.ml"
+# 666 "myocamlbuild.ml"
 (* OASIS_STOP *)
 
 let () =

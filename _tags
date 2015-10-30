@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: c3ae0f9c692e119b4fee889e70009c68)
+# DO NOT EDIT (digest: facf99a8b8e19ee8a3651f65dd3f621d)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -14,9 +14,9 @@ true: annot, bin_annot
 ".git": not_hygienic
 "_darcs": -traverse
 "_darcs": not_hygienic
-# Executable electrum
-"src/main/electrumAnalyzer.native": oasis_executable_electrum_native
-<src/main/*.ml{,i,y}>: oasis_executable_electrum_native
+# Executable electrumAnalyzer
+"src/main/electrumAnalyzer.native": oasis_executable_electrumanalyzer_native
+<src/main/*.ml{,i,y}>: oasis_executable_electrumanalyzer_native
 "src/main/electrumAnalyzer.native": pkg_batteries
 "src/main/electrumAnalyzer.native": pkg_cmdliner
 "src/main/electrumAnalyzer.native": pkg_menhirLib
