@@ -17,8 +17,8 @@ License: GPL-3+
 LicenseFile: COPYING.txt
 Homepage: https://forge.onera.fr/projects/electrum
 
-Synopsis: Electrum Analyzer translates Electrum models to a
-  model-checker (as of now: files processable with NuSMV and nuXmv).
+Synopsis: Translates Electrum models to a model-checker (as of now:
+  files processable with NuSMV and nuXmv).
 
 Description: Electrum is a formal specification language based upon
   relational first-order logic (RFOL) and linear temporal logic (LTL),
