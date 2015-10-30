@@ -1,5 +1,5 @@
-(* OASIS_START *)
-(* DO NOT EDIT (digest: ccc1c584f5ebda459d1f95e4c0521d08) *)
+<!--- OASIS_START --->
+<!--- DO NOT EDIT (digest: ccc1c584f5ebda459d1f95e4c0521d08) --->
 
 This is the INSTALL file for the Electrum Analyzer distribution.
 
@@ -39,4 +39,4 @@ OASIS is a program that generates a setup.ml file using a simple '_oasis'
 configuration file. The generated setup only depends on the standard OCaml
 installation: no additional library is required.
 
-(* OASIS_STOP *)
+<!--- OASIS_STOP --->

@@ -23,7 +23,7 @@ Synopsis: Electrum is a formal specification language based upon
   nuXmv.
 
 Plugins: DevFiles (0.4), StdFiles (0.4)
-AlphaFeatures:  ocamlbuild_more_args, compiled_setup_ml
+AlphaFeatures:  ocamlbuild_more_args, compiled_setup_ml, stdfiles_markdown
 
 XDevFilesEnableMakefile: true
 XDevFilesEnableConfigure: true
