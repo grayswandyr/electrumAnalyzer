@@ -15,8 +15,7 @@ build: [
 ]
 install: [make "install"]
 remove: [
-  ["./configure" "--prefix=%{prefix}%"]
-  [make "uninstall"]
+  ["rm" "-f" "%{bin}%/electrumAnalyzer"]
 ]
 depends: [
   "batteries" {build}
