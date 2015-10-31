@@ -52,7 +52,7 @@ Flag profiling
 Executable "electrumAnalyzer"
   Path:       src/main
   MainIs:     electrumAnalyzer.ml
-  CompiledObject: native
+  CompiledObject: best
   Install:    true
   if flag(warnings)
     NativeOpt+: -w A

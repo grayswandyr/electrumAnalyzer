@@ -15,7 +15,7 @@ build: [
 ]
 install: [make "install"]
 remove: [
-  ["rm" "-f" "%{bin}%/electrumAnalyzer"]
+  ["rm" "-f" "%{bin}%/electrumAnalyzer"] { os = "darwin" | os = "linux" }
 ]
 depends: [
   "batteries" {build}
@@ -24,4 +24,4 @@ depends: [
   "ocamlfind" {build}
   "pprint" {build}
 ]
-available: [ ocaml-version >= "4.02" ]
+available: [ (os = "darwin" | os = "linux") & ocaml-version >= "4.02" ]
