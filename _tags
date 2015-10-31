@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 8acb1ab9ef098260e121da837cd11f19)
+# DO NOT EDIT (digest: 29f71dc8484d1c3a0497e488e39b30fc)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -17,15 +17,15 @@ true: annot, bin_annot
 # Executable electrumAnalyzer
 <src/main/electrumAnalyzer.{native,byte}>: oasis_executable_electrumanalyzer_native
 <src/main/*.ml{,i,y}>: oasis_executable_electrumanalyzer_native
-<src/main/electrumAnalyzer.{native,byte}>: pkg_batteries
-<src/main/electrumAnalyzer.{native,byte}>: pkg_cmdliner
-<src/main/electrumAnalyzer.{native,byte}>: pkg_menhirLib
-<src/main/electrumAnalyzer.{native,byte}>: pkg_pprint
-<src/main/electrumAnalyzer.{native,byte}>: pkg_str
-<src/main/*.ml{,i,y}>: pkg_batteries
-<src/main/*.ml{,i,y}>: pkg_cmdliner
-<src/main/*.ml{,i,y}>: pkg_menhirLib
-<src/main/*.ml{,i,y}>: pkg_pprint
-<src/main/*.ml{,i,y}>: pkg_str
+<src/main/electrumAnalyzer.{native,byte}>: package(batteries)
+<src/main/electrumAnalyzer.{native,byte}>: package(cmdliner)
+<src/main/electrumAnalyzer.{native,byte}>: package(menhirLib)
+<src/main/electrumAnalyzer.{native,byte}>: package(pprint)
+<src/main/electrumAnalyzer.{native,byte}>: package(str)
+<src/main/*.ml{,i,y}>: package(batteries)
+<src/main/*.ml{,i,y}>: package(cmdliner)
+<src/main/*.ml{,i,y}>: package(menhirLib)
+<src/main/*.ml{,i,y}>: package(pprint)
+<src/main/*.ml{,i,y}>: package(str)
 # OASIS_STOP
 <src/**> : include
