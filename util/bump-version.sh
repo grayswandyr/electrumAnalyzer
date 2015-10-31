@@ -10,4 +10,6 @@ sed -i "s/Version:.*\$/Version: $VERSION/" _oasis
 
 sed -i "s/[^-]version:.*\$/version: \"$VERSION\"/" opam
 
+echo "let version = \"$VERSION\"" > src/version.ml
+
 oasis setup

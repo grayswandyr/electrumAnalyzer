@@ -680,18 +680,22 @@ let () =
             (fun _env _build ->
                let open Unix in
                let version =
-                 String.trim (run_and_read ("git describe --long --always")) in
+                 try
+                   String.trim (run_and_read ("git describe --long --always"))
+                 with
+                   _ -> "Version.version"
+               in
                let { tm_sec; tm_min; tm_hour;
                      tm_mday; tm_mon; tm_year; _ } = gmtime (time ()) in  
                let timestamp = Printf.sprintf "%d-%02d-%02d %02d:%02d:%02d UTC"
                  (tm_year + 1900) tm_mon tm_mday tm_hour tm_min tm_sec in
                let code = Printf.sprintf
-                            "let version = %S\n\
+                            "let version = %s\n\
                              let timestamp = %S\n"
                             version timestamp in
                Printf.printf
                  "Generating compile-time file %S \
-                  with version= %S and timestamp= %S.\n%!"
+                  with version= %s and timestamp= %S.\n%!"
                  buildfile version timestamp;
                Echo ([code], buildfile)
             )
