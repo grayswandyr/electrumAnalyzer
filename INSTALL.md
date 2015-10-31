@@ -1,5 +1,5 @@
 <!--- OASIS_START --->
-<!--- DO NOT EDIT (digest: e95b5eb74a3056958198eb8804ff15bc) --->
+<!--- DO NOT EDIT (digest: 3cdf190e3231e55171908a6a9d2ef4f4) --->
 
 This is the INSTALL file for the electrumAnalyzer distribution.
 
@@ -11,12 +11,12 @@ Dependencies
 
 In order to compile this package, you will need:
 
-* ocaml
+* ocaml (>= 4.00)
 * findlib
 * pprint
 * menhirLib (>= 20150720)
 * batteries
-* cmdliner
+* cmdliner (>= 0.9.5)
 
 Installing
 ==========
