@@ -1,4 +1,4 @@
-Version: 0.3.4.rc.3
+Version: 0.3.4
 
 OASISFormat: 0.4 
 Name: electrumAnalyzer
@@ -30,8 +30,8 @@ Description: Electrum is a formal specification language based upon
 Plugins: DevFiles (0.4), StdFiles (0.4)
 AlphaFeatures:  ocamlbuild_more_args, compiled_setup_ml, stdfiles_markdown
 
-OCamlVersion: 0.3.4.rc.3
-FindlibVersion: 0.3.4.rc.3
+OCamlVersion: >= 4.02
+FindlibVersion: >= 1.5.5
 
 XDevFilesEnableMakefile: true
 XDevFilesEnableConfigure: true
