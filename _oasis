@@ -17,21 +17,19 @@ License: GPL-3+
 LicenseFile: COPYING.txt
 Homepage: https://forge.onera.fr/projects/electrum
 
-Synopsis: Translates Electrum models to a model-checker (as of now:
-  files processable with NuSMV and nuXmv).
+Synopsis: A tool for the analysis of Electrum formal specifications.
 
 Description: Electrum is a formal specification language based upon
   relational first-order logic (RFOL) and linear temporal logic (LTL),
-  mainly inspired by Alloy and TLA+.
-  Electrum Analyzer is a free-software prototype for the analysis of
-  Electrum models: as of now, it proceeds by translation into SMV models
-  processable by NuSMV and nuXmv.
+  mainly inspired by Alloy and TLA+.  Electrum Analyzer is a
+  free-software prototype for the analysis of Electrum models: as of
+  now, it proceeds by translation into SMV models processable by NuSMV
+  and nuXmv.
 
 Plugins: DevFiles (0.4), StdFiles (0.4)
 AlphaFeatures:  ocamlbuild_more_args, compiled_setup_ml, stdfiles_markdown
 
 OCamlVersion: >= 4.02
-FindlibVersion: >= 1.5.5
 
 XDevFilesEnableMakefile: true
 XDevFilesEnableConfigure: true
@@ -41,8 +39,8 @@ XOCamlbuildExtraArgs:
   --unused-token SET'" -pkgs pprint,menhirLib,batteries,cmdliner -j 0
 #  -classic-display
 
-BuildDepends: pprint, menhirLib (>= 20150720), str, batteries, cmdliner (>= 0.9.5)
-BuildTools:  ocamlbuild
+BuildDepends: pprint, menhirLib (>= 20150720), str, batteries, cmdliner
+BuildTools:  ocamlbuild, ocamlfind
 
 Flag warnings
   Description: Activate all compilation warnings.
@@ -65,13 +63,13 @@ Executable "electrumAnalyzer"
 
 SourceRepository head
   Type: git
-  Location: https://git.onera.fr/electrum.git
+  Location: https://github.com/grayswandyr/electrumAnalyzer.git
   Browser: https://forge.onera.fr/projects/electrum
   Branch: master
 
 
-SourceRepository github
+SourceRepository official
   Type: git
-  Location: https://github.com/grayswandyr/electrumAnalyzer.git
-  Browser: https://github.com/grayswandyr/electrumAnalyzer
+  Location: https://git.onera.fr/electrum.git
+  Browser: https://forge.onera.fr/projects/electrum
   Branch: master
