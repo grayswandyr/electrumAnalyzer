@@ -1,4 +1,4 @@
-Version: 0.3.4+002
+Version: 0.3.4
 
 OASISFormat: 0.4 
 Name: electrumAnalyzer
@@ -40,7 +40,7 @@ XOCamlbuildExtraArgs:
 #  -classic-display
 
 BuildDepends: pprint, menhirLib (>= 20150720), str, batteries, cmdliner
-BuildTools:  ocamlbuild, ocamlfind
+BuildTools:  ocamlbuild, ocamlfind 
 
 Flag warnings
   Description: Activate all compilation warnings.
