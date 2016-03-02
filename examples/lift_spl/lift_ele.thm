@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view nodetheme="Martha">
+
+<projection> <type name="Time"/> </projection>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="ChangeDir"/>
+   <type name="ClosedEvent"/>
+   <type name="Empty"/>
+   <type name="F1"/>
+   <type name="F2"/>
+   <type name="F3"/>
+   <type name="FEmpty"/>
+   <type name="FExecutive"/>
+   <type name="FIdle"/>
+   <type name="FOverload"/>
+   <type name="FPark"/>
+   <type name="FThird"/>
+   <type name="IB1"/>
+   <type name="IB2"/>
+   <type name="IB3"/>
+   <type name="Idle"/>
+   <type name="Int"/>
+   <type name="LandingButton"/>
+   <type name="LB1"/>
+   <type name="LB2"/>
+   <type name="LB3"/>
+   <type name="LiftButton"/>
+   <type name="Move"/>
+   <type name="Normal"/>
+   <type name="OpenedEvent"/>
+   <type name="Overload"/>
+   <type name="String"/>
+   <type name="Third"/>
+   <type name="Time"/>
+   <type name="univ"/>
+   <type name="fl/Ord"/>
+   <type name="ordering/Ord"/>
+   <type name="seq/Int"/>
+</node>
+
+<node color="Gray">
+   <type name="Floor"/>
+</node>
+
+<node hideunconnected="yes" shape="Ellipse" color="White">
+   <type name="Load"/>
+</node>
+
+<node shape="Circle">
+   <type name="Button"/>
+</node>
+
+<node shape="Inv House" color="Red">
+   <type name="Lift"/>
+</node>
+
+<node showlabel="no">
+   <set name="this/Open" type="Lift"/>
+   <set name="this/Pressed" type="Button"/>
+   <set name="this/Up" type="Lift"/>
+   <set name="_this/ChangeDir" type="ChangeDir"/>
+   <set name="_this/ClosedEvent" type="ClosedEvent"/>
+   <set name="_this/Idle" type="Idle"/>
+   <set name="_this/Move" type="Move"/>
+   <set name="_this/OpenedEvent" type="OpenedEvent"/>
+</node>
+
+<node showlabel="no" color="Blue">
+   <set name="_this/Pressed" type="Button"/>
+</node>
+
+<node showlabel="no" color="Green">
+   <set name="_this/Open" type="Lift"/>
+</node>
+
+<node showlabel="no" shape="House">
+   <set name="_this/Up" type="Lift"/>
+</node>
+
+<node visible="no" shape="Hexagon" color="Red">
+   <type name="Event"/>
+</node>
+
+<node visible="no" shape="Lined Circle" color="Gray">
+   <type name="Feature"/>
+</node>
+
+<node visible="yes" showlabel="no">
+   <set name="this/Product" type="Feature"/>
+   <set name="_this/Event" type="Event"/>
+</node>
+
+</view>
+
+</alloy>

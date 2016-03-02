@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view nodetheme="Martha">
+
+<projection> <type name="State"/> </projection>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="ChangeDir"/>
+   <type name="ClosedEvent"/>
+   <type name="CloseDoor"/>
+   <type name="Empty"/>
+   <type name="F1"/>
+   <type name="F2"/>
+   <type name="F3"/>
+   <type name="FEmpty"/>
+   <type name="FExecutive"/>
+   <type name="FIdle"/>
+   <type name="FOverload"/>
+   <type name="FPark"/>
+   <type name="FThird"/>
+   <type name="IB1"/>
+   <type name="IB2"/>
+   <type name="IB3"/>
+   <type name="Idle"/>
+   <type name="Int"/>
+   <type name="LandingButton"/>
+   <type name="LB1"/>
+   <type name="LB2"/>
+   <type name="LB3"/>
+   <type name="LiftButton"/>
+   <type name="Move"/>
+   <type name="Normal"/>
+   <type name="Overload"/>
+   <type name="State"/>
+   <type name="String"/>
+   <type name="Third"/>
+   <type name="univ"/>
+   <type name="fl/Ord"/>
+   <type name="ordering/Ord"/>
+   <type name="seq/Int"/>
+   <type name="trace/Ord"/>
+   <set name="$s" type="State"/>
+   <set name="First" type="trace/Ord"/>
+   <set name="Loop" type="trace/Ord"/>
+   <set name="Next" type="trace/Ord"/>
+   <set name="pos" type="Event"/>
+</node>
+
+<node color="Gray">
+   <type name="Floor"/>
+</node>
+
+<node hideunconnected="yes" shape="Ellipse" color="White">
+   <type name="Load"/>
+</node>
+
+<node shape="Circle">
+   <type name="Button"/>
+</node>
+
+<node shape="Inv House" color="Red">
+   <type name="Lift"/>
+</node>
+
+<node showlabel="no" color="Blue">
+   <set name="pressed" type="Button"/>
+</node>
+
+<node showlabel="no" color="Green">
+   <set name="Open" type="Lift"/>
+</node>
+
+<node showlabel="no" shape="House">
+   <set name="Up" type="Lift"/>
+</node>
+
+<node visible="no" shape="Hexagon" color="Red">
+   <type name="Event"/>
+</node>
+
+<node visible="no" shape="Lined Circle" color="Gray">
+   <type name="Feature"/>
+</node>
+
+<node visible="yes" showlabel="no">
+   <set name="this/Product" type="Feature"/>
+   <set name="pre" type="Event"/>
+</node>
+
+</view>
+
+</alloy>
