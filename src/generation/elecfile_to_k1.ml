@@ -1,5 +1,5 @@
 (*******************************************************************************
- * Time-stamp: <2015-10-29 CET 09:39:37 David Chemouil>
+ * Time-stamp: <2016-03-02 CET 11:42:51 David Chemouil>
  * 
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera, (C) 2015 IRIT
@@ -357,7 +357,7 @@ let onesig_to_k1prop signature signame envalias=
                             curterm=None;
                             local_names=field_names;
                          }
-              in forall1([var_s],sigterm, cond)
+              in Always (forall1([var_s],sigterm, cond))
             ) bloc
         in  
         conjlist factlist
