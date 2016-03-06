@@ -61,18 +61,24 @@ let execute verbosity outfile env =
   let sigord = Elec_to_k1.(newenv.sigtot) in  
   let siglist = List.of_enum (NameMap.keys (fst sigord)) in
   let sigmult = sigmult_from_env env (fst sigord) in
-
   let abstract_sigs = abstract_sigs_from_env env siglist in
+  let min_instances_set_map = min_instances_map_from_env sigord sigmult in
 
   (* compute the two formulas to send to NuXMV : 
      the invariant invar and the formula to check as an LTLSPEC *)  
   (* cmd = true => check, cmd = false => run *)
   let smv_formula_from_cmd is_check cmdnum formula bnd  =
+    let instances_set_map =
+      compute_atoms_per_sig sigord bnd sigmult min_instances_set_map abstract_sigs
+    in
+
     let sigenv = { 
       sigord = sigord; 
       sigbounds = bnd;
       sigmult = sigmult;
       abstract_sigs = abstract_sigs;
+      lowerbounds = min_instances_set_map;
+      instances_map = instances_set_map;
     } in
     Cfg.print_debug @@
     (string_of_int @@ NameMap.cardinal (fst sigenv.sigord))
@@ -106,7 +112,8 @@ let execute verbosity outfile env =
     let ltl_fact =  translate sigenv k2_fact in
     let ltl_static_fact = translate sigenv k2_static_fact in
     let ltl_check_run =
-      translate sigenv k2_check_run in
+      translate sigenv k2_check_run
+    in
     let inst_constraints = compute_instances_constraints sigenv in
     let ltl_tc_set = translate sigenv k2_tc_set in
     let ltl_typing = translate sigenv k2_typing in

@@ -69,11 +69,18 @@ let test_translations x =
     abstract_sigs_from_env x  
       (List.of_enum (NameMap.keys (fst sigord))) 
   in
+  let min_instances_set_map = min_instances_map_from_env sigord sigmult in
+
+  let inst_set_map =
+    compute_atoms_per_sig sigord bnds sigmult min_instances_set_map abstr_sigs
+  in
   let sigenv =
     { sigord = sigord;
       sigbounds = bnds;
       sigmult = mult_of_sigs;
       abstract_sigs = abstr_sigs;
+      lowerbounds = min_instances_set_map;
+      instances_map = inst_set_map;
     }
   in
   let k2_model = K1_to_k2.translate sigenv phi_model in
