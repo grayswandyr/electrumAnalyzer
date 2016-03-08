@@ -300,9 +300,11 @@ let rec qn_to_term qname envalias btexpr elecprof=
          ^ " arguments to relation "^ name^"\n");*)
       join_appl relterm_deref envalias.arglist envalias
 
-    with Not_found -> (* if nothing is found it is a variable *)
+    with Not_found -> (* if nothing is found it is a variable, in which case we still have to join the arglist *)
       (* Cfg.print_debug ("The name "^name^" was not found, inferred as a variable\n"); *)
-      {term=TVar name; profile= elecprof}
+      let varterm={term=TVar name; profile= elecprof}
+      in
+      join_appl varterm envalias.arglist envalias
 
 (* boolean saying if we want to propagate arguments or not *)
 and prop_args (e:expr)=match e.expr with
@@ -436,7 +438,7 @@ and expr_to_k1term elec_expr envalias_init=
         )
     (* binary operator *)
     | EBinary (e1,op,e2) ->
-        let (ke1,forms1)=expr_to_k1term e1 {envalias with arglist=[]}in 
+        let (ke1,forms1)=expr_to_k1term e1 {envalias with arglist=[]} in 
         (* we have to plan for special cases in case of BDot *)
         let (ke2,forms2)=
           (match op with 
@@ -527,15 +529,16 @@ and expr_to_k1term elec_expr envalias_init=
                  ) 
 
 
-          | BDot -> 
-              if prop_args e2 then 
+          | BDot ->
+              if prop_args e2 then
                 (* no need to join, it was done via arglist *)
-                ke2 , forms
+                  ke2 , forms
               else (* below is a non accumulative expression *)
-                {term=(TBinop(Join, ke1, ke2 )); profile=elecprof}, forms
-          (* logic *)
+                  {term=(TBinop(Join, ke1, ke2 )); profile=elecprof}, forms
+                
+           (* logic *)
           | _ -> failwith "Elec_to_k1.expr_to_k1term: Boolean operators do not form terms"
-        )
+         )
     (* cartesian product with multiplicities à la UML *) 
     | ECart (e1, m1, m2, e2) -> 
         (*let mcont=match envalias.curterm with
@@ -698,7 +701,7 @@ and expr_to_k1term elec_expr envalias_init=
           let envargs={envalias with arglist=termlist@envalias.arglist} in
           let (res, resforms)=expr_to_k1term f envargs
           in (res,forms@resforms)
-        else (* we join all elemnts to the expression f *)
+        else (* we join all elements to the expression f *)
           let ef,flist=expr_to_k1term f envalias in
           let res=join_appl ef termlist envalias in
           (res, forms@flist)
