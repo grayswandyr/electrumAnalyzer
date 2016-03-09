@@ -1156,12 +1156,14 @@ and process_file_pass blocs acc_env=let open Ast_par in match blocs with
                                                  env_f.sig_list;}
 
           | Enum e -> (* (X,[A,B,C]) means "abstract sig X { } one sig A, B, C extends X { }"*) 
+              let ename=Ast.Qname.local e.name in
+              let addmainsig=addsig ename (QNameSet.empty, false) acc_env.sign_ord in
               let newsig=addsiglist 
                            (List.map Ast.Qname.local e.cases)
-                           [Ast.Qname.local e.name]
+                           [ename]
                            false (* no is_variable field, interpreted as static by default *)
-                           acc_env.sign_ord
-
+                           addmainsig
+		
               in process_file_pass q {acc_env 
                                       with sign_ord=newsig;
                                            sig_list=acc_env.sig_list@(enum_to_siglist e)}
