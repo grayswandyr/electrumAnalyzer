@@ -64,6 +64,13 @@ let execute verbosity outfile env =
   let abstract_sigs = abstract_sigs_from_env env siglist in
   let min_instances_set_map = min_instances_map_from_env sigord sigmult in
 
+  if verbosity > 1 then
+    begin
+      Printf.printf "\n*** Lower bounds ***\n";
+      print_lowerbounds min_instances_set_map;
+      Printf.printf "\n******\n"
+    end;
+
   (* compute the two formulas to send to NuXMV : 
      the invariant invar and the formula to check as an LTLSPEC *)  
   (* cmd = true => check, cmd = false => run *)
@@ -79,7 +86,15 @@ let execute verbosity outfile env =
       abstract_sigs = abstract_sigs;
       lowerbounds = min_instances_set_map;
       instances_map = instances_set_map;
-    } in
+      } in
+    
+  if verbosity > 1 then
+    begin
+      Printf.printf "\n*** Instances set map ***\n";
+      print_lowerbounds instances_set_map;
+      Printf.printf "\n******\n"
+    end;
+    
     Cfg.print_debug @@
     (string_of_int @@ NameMap.cardinal (fst sigenv.sigord))
     ^ " entries in sigord\n and "

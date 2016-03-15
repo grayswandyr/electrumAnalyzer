@@ -418,6 +418,32 @@ let direct_super_sig sigenv s =
   with
       Not_found -> failwith ("direct_super_sig: Sort " ^ s ^ " has no direct super sig.\n")
 
+                            (* find the direct super signature of a signature *)
+let direct_super_sig2 sigord s =
+  let (greater_sigs, _ ) = 
+    try NameMap.find s (fst sigord)
+    with Not_found -> failwith ("direct_super_sig2: Sort " ^ s ^ " not found.\n") 
+  in
+  let set_father = NameSet.filter (is_father2 sigord s) greater_sigs in
+  try NameSet.choose set_father
+  with
+      Not_found -> failwith ("direct_super_sig2: Sort " ^ s ^ " has no direct super sig.\n")
+
+(* returns true iff all its parent signatures are parents through extends, and not through in *)
+let rec no_parent_through_in sigord s =
+  if (is_primary2 sigord s) || (s = Names.univ)
+  then
+    true
+  else
+    (* if s is not present is some equivalence class, i.e., s does not extends
+       some signature, then return false *)
+    if not (EqClasses.exists (fun set -> NameSet.mem s set) (snd sigord))
+    then
+      false
+    else
+      let father = direct_super_sig2 sigord s in 
+      no_parent_through_in sigord father
+                            
 (* add static hulls to primary var sigs *)
 (* let bound_hulls sigenv= *)
 (*    let newbounds= *)
@@ -643,34 +669,38 @@ let create_atoms k s =
 the electrum model (lower bound in the sense of kodkod)
 *)
 let rec min_instances_set sigord sigmult s =
-  let siglist = List.of_enum (NameMap.keys (fst sigord)) in
-  let sons_for_extends = 
-    List.filter (fun son -> is_father_for_extends sigord son s) siglist 
-  in
-  (* all the instances that the sons must have *)
-  let sons_instances =
-    List.fold_right List.append
-                    (List.map (min_instances_set sigord sigmult)
-                              sons_for_extends)
-                    []
-  in
-  (* if there is no insance that the sons must have and the mult is one, 
-     then we create an instance
-  *)
-  if is_empty sons_instances
-  then
-    begin
-      if (mult_is_one2 sigmult s) && not (is_var2 sigord s)
-      then
-        [ s ^ "$$" ]
-      else
-        []
-    end
+  (* if there is some parent through in then we do not consider the minimum
+      instances set (return empty list) *)
+  if not (no_parent_through_in sigord s) then []
   else
-    (* if some of the sons must have instances, we consider these instances *)
-    sons_instances   
+    let siglist = List.of_enum (NameMap.keys (fst sigord)) in
+    let sons_for_extends = 
+      List.filter (fun son -> is_father_for_extends sigord son s) siglist 
+    in
+    (* all the instances that the sons must have *)
+    let sons_instances =
+      List.fold_right List.append
+                      (List.map (min_instances_set sigord sigmult)
+                                sons_for_extends)
+                      []
+    in
+    (* if there is no insance that the sons must have and the mult is one, 
+     then we create an instance
+     *)
+    if is_empty sons_instances
+    then
+      begin
+        if (mult_is_one2 sigmult s) && not (is_var2 sigord s)
+        then
+          [ s ^ "$$" ]
+        else
+          []
+      end
+    else
+      (* if some of the sons must have instances, we consider these instances *)
+      sons_instances   
 
-(* returns a map associating each signature to the minimal set of
+(* returns a map associating each signature with the minimal set of
 instances it must have according to the one sigs in the electrum
 models 
 *)    
@@ -766,7 +796,7 @@ let rec compute_atoms_for_sig sigord sigbounds sigmult lowerbounds abstr_sigs s 
     | Not_found -> failwith ("profile.compute_atoms_per_sig: cannot find \ 
                               lower bound of sig " ^ s)
   in
-  if (mult_is_one2 sigmult s) && not(is_var2 sigord s)
+  if (mult_is_one2 sigmult s) && not(is_var2 sigord s) && (no_parent_through_in sigord s)
   then
     min_instances
   else

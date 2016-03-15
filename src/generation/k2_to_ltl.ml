@@ -282,12 +282,14 @@ let rec k2_to_ltl unfolding_env sigenv phi  =
           in
           
           let formula_list =
-            (* static one sig, or abstract sig with all sons static one sigs *)
+            (* static one sig, or abstract sig with all sons static one sigs (and no parent through in) *)
             (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *)
-            if (not (is_var sigenv s) &&  mult_is_one sigenv s)
+            if ((not (is_var sigenv s) &&  mult_is_one sigenv s)
                ||
                  (List.mem s sigenv.abstract_sigs && not (is_var sigenv s)
-                  && sons_are_static_one_sigs)               
+                  && sons_are_static_one_sigs)
+               )
+               && no_parent_through_in sigenv.sigord s
             then
               List.map (add_atom_to_env unfolding_env sigenv p x) 
                        var_name_list
@@ -355,12 +357,14 @@ let rec k2_to_ltl unfolding_env sigenv phi  =
           in
           
           let formula_list =
-            (* static one sig, or abstract sig with all sons static one sigs *)
+            (* static one sig, or abstract sig with all sons static one sigs (and no parent through in) *)
             (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *)
-            if (not (is_var sigenv s) &&  mult_is_one sigenv s)
+            if ((not (is_var sigenv s) &&  mult_is_one sigenv s)
                ||
                  (List.mem s sigenv.abstract_sigs && not (is_var sigenv s)
-                  && sons_are_static_one_sigs)               
+                  && sons_are_static_one_sigs)
+               )
+               && no_parent_through_in sigenv.sigord s
             then
               List.map (add_atom_to_env unfolding_env sigenv p x) 
                        var_name_list
