@@ -66,29 +66,9 @@ let disjunction formula_list =
     | t::q ->  List.fold_left disj t q
 
 
-(* This function creates atoms fo the signature s and its bound k. *)
-let create_atoms k s =
-  let rec create_aux s k l = 
-    if k = 0 then
-      l
-    else
-      create_aux s (k-1) ((s ^ "$" ^ (string_of_int k)) :: l)
-  in  match s with 
-    | name -> create_aux name k []
-
 let atom_is_in s inst =
   inst ^ "_is_in_" ^ s
 
-(* This function computes the list of atoms from the list of the
-   primary signatures and the signature environment (of type sig_env). *)
-let compute_atoms_per_primary_sig primary_signatures sigenv =
-  let  fun_add m s =
-    if (mult_is_one_or_lone sigenv s) && not (is_var sigenv s) then
-      NameMap.add s (create_atoms 1 s) m
-    else
-      NameMap.add s (create_atoms (snd (NameMap.find s sigenv.sigbounds)) s) m 
-  in 
-  List.fold_left fun_add NameMap.empty primary_signatures
 
 (* let rec compute_atoms_per_non_primary_sig sigenv current_map = *)
 (*   if NameSet.equal  *)
@@ -170,8 +150,13 @@ let atomic_proposition_from_const_pred unfolding_env p (nlist: string list) =
 *)
 let instantiate_profile sigenv prof =
   let instantiate_sig s =
-    let prim_of_s = primary_sig_of sigenv s in
-    create_atoms (snd (NameMap.find prim_of_s sigenv.sigbounds)) prim_of_s
+    try
+      NameMap.find s sigenv.instances_map
+    with
+    | Not_found -> failwith ("k2_to_ltl.instantiate_profile: canno instantiate \ 
+                              signature " ^ s)
+    (* let prim_of_s = primary_sig_of sigenv s in *)
+    (* create_atoms (snd (NameMap.find prim_of_s sigenv.sigbounds)) prim_of_s *)
   in
   List.map (fun range -> List.map instantiate_sig range) (Union.elements prof)
 
@@ -197,6 +182,10 @@ let comp2_to_ltl_comp (c: K2.comp_int2) =
    Parameter phi is the K2 formula to translate.  
 *)
 let rec k2_to_ltl unfolding_env sigenv phi  =
+  (* print_endline "Lower bounds:"; *)
+  (* print_lowerbounds sigenv.lowerbounds; *)
+  (* print_endline "Bounds:"; *)
+  (* print_bound sigenv.sigbounds; *)
   (* the list of all signatures *)
   let siglist = List.of_enum (NameMap.keys (fst sigenv.sigord)) in
 
@@ -205,21 +194,23 @@ let rec k2_to_ltl unfolding_env sigenv phi  =
 
   (* map associating each primary signature to the list of its intances 
      (atoms) *) 
-  let atom_list_per_prim_sig = 
-    compute_atoms_per_primary_sig primary_sigs sigenv 
+  let atom_list_per_sig = 
+    sigenv.instances_map
   in  
 
   (* returns the set of atoms in the primary signature subsuming s *)
   let instantiate s =
+    (* print_endline ("Instantiating " ^s); *)
     try 
       if s = Names.univ
       then
         begin
           Cfg.print_debug "instantiate univ";
-          NameMap.values atom_list_per_prim_sig |> List.of_enum |> List.concat
+          NameMap.filter (fun k v -> List.mem k primary_sigs) atom_list_per_sig
+         |> NameMap.values  |> List.of_enum |> List.concat
         end
       else
-        NameMap.find (primary_sig_of sigenv s) atom_list_per_prim_sig
+        NameMap.find  s atom_list_per_sig
     with
         Not_found -> failwith ("k2_to_ltl: cannot instantiate sort " ^ s)
   in
@@ -276,40 +267,64 @@ let rec k2_to_ltl unfolding_env sigenv phi  =
 
         else
           (* var_name_list = the list of the atoms corresponding of all instances
-             of the primary signature subsuming s *)      
+             of the primary signature subsuming s *)
           let var_name_list = instantiate s in
-          (* exact bound or s is primary and declared as one sig *)
-          let formula_list = 
-            if fst (NameMap.find (primary_sig_of sigenv s) sigenv.sigbounds)
-            || (is_primary sigenv s &&  mult_is_one sigenv s)
+          let sons_for_extends = 
+            List.filter (fun son -> is_father_for_extends sigenv.sigord son s)
+                        siglist 
+          in
+          let sons_are_static_one_sigs =
+            List.for_all (fun son ->
+                          mult_is_one sigenv son
+                          && not (is_var sigenv son)
+                         )
+                         sons_for_extends
+          in
+          
+          let formula_list =
+            (* static one sig, or abstract sig with all sons static one sigs (and no parent through in) *)
+            (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *)
+            if ((not (is_var sigenv s) &&  mult_is_one sigenv s)
+               ||
+                 (List.mem s sigenv.abstract_sigs && not (is_var sigenv s)
+                  && sons_are_static_one_sigs)
+               )
+               && no_parent_through_in sigenv.sigord s
             then
-              begin
-                (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *) 
-                if (is_primary sigenv s) then
-                  List.map (add_atom_to_env unfolding_env sigenv p x) 
-                    var_name_list
-                else
-                  (* formula_list = [s$1_in_s & p{x->s$1} ; s$2_in_s & p{x-> s$2} ; ...] *) 
-                  List.map (impl_forall_exact_bound unfolding_env sigenv x s p) 
-                    var_name_list 
-              end      
-              (* not exact bound *)
+              List.map (add_atom_to_env unfolding_env sigenv p x) 
+                       var_name_list
             else
-              begin
-                if (is_primary sigenv s) then
-                  begin
-                    (* Cfg.print_debug @@ Printf.sprintf "Passage dans l'appel avec x = %s et s =%s\n" *)
-                    (*            x s ; *)
-                    (* formula_list = [s$1 => p{x-> s$1} ; s$2  -> p{x->s$2} ; ...] *)
-                    List.map (create_implication unfolding_env sigenv x s p) 
-                      var_name_list   
-                  end
-                else
-                  (* formula_list = [s$1 & s$1_in_s => p{x-> s$1} ; 
+              (* exact bound *)
+              if fst (NameMap.find (primary_sig_of sigenv s) sigenv.sigbounds)
+              then
+                begin
+                  (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *) 
+                  if (List.mem  s primary_sigs) 
+                  then
+                    List.map (add_atom_to_env unfolding_env sigenv p x) 
+                             var_name_list
+                  else
+                    (* formula_list = [s$1_in_s => p{x->s$1} ; s$2_in_s => p{x-> s$2} ; ...] *) 
+                    List.map (impl_forall_exact_bound unfolding_env sigenv x s p) 
+                             var_name_list 
+                end      
+                  (* not exact bound *)
+              else
+                begin
+                  if (List.mem s primary_sigs) then
+                    begin
+                      (* Cfg.print_debug @@ Printf.sprintf "Passage dans l'appel avec x = %s et s =%s\n" *)
+                      (*            x s ; *)
+                      (* formula_list = [s$1 => p{x-> s$1} ; s$2  -> p{x->s$2} ; ...] *)
+                      List.map (create_implication unfolding_env sigenv x s p) 
+                               var_name_list   
+                    end
+                  else
+                    (* formula_list = [s$1 & s$1_in_s => p{x-> s$1} ; 
                      s$2 & s$2_in_s -> p{x->s$2}; ...] *)
-                  List.map (impl_forall_notexact_bound unfolding_env sigenv x s p) 
-                    var_name_list    
-              end
+                    List.map (impl_forall_notexact_bound unfolding_env sigenv x s p) 
+                             var_name_list    
+                end
           in       
           conjunction formula_list
 
@@ -328,35 +343,62 @@ let rec k2_to_ltl unfolding_env sigenv phi  =
           (* var_name_list = the list of the atoms corresponding of all instances
              of the primary signature subsuming s *) 
           let var_name_list = instantiate s in
-          if fst (NameMap.find (primary_sig_of sigenv s) sigenv.sigbounds) 
-          || (is_primary sigenv s && mult_is_one sigenv s )
-          then
-            (* exact bound or s is primary and declared as one sig *)
-            let formula_list = 
-              if (is_primary sigenv s) then
-                (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *) 
-                List.map (add_atom_to_env unfolding_env sigenv p x) 
-                  var_name_list 
+
+          let sons_for_extends = 
+            List.filter (fun son -> is_father_for_extends sigenv.sigord son s)
+                        siglist 
+          in
+          let sons_are_static_one_sigs =
+            List.for_all (fun son ->
+                          mult_is_one sigenv son
+                          && not (is_var sigenv son)
+                         )
+                         sons_for_extends
+          in
+          
+          let formula_list =
+            (* static one sig, or abstract sig with all sons static one sigs (and no parent through in) *)
+            (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *)
+            if ((not (is_var sigenv s) &&  mult_is_one sigenv s)
+               ||
+                 (List.mem s sigenv.abstract_sigs && not (is_var sigenv s)
+                  && sons_are_static_one_sigs)
+               )
+               && no_parent_through_in sigenv.sigord s
+            then
+              List.map (add_atom_to_env unfolding_env sigenv p x) 
+                       var_name_list
+            else
+
+              if fst (NameMap.find (primary_sig_of sigenv s) sigenv.sigbounds) 
+              then
+                begin
+                  (* exact bound *)         
+                  if List.mem s primary_sigs                              
+                  then
+                    (* exact bound and primary sig*)
+                    (* formula_list = [p{x->s$1} ; p{x-> s$2} ; ...] *) 
+                    List.map (add_atom_to_env unfolding_env sigenv p x) 
+                             var_name_list 
+                  else
+                  (* formula_list = [s$1_in_s & p{x->s$1} ; s$2_in_s & p{x-> s$2} ; ...] *) 
+                    List.map (conj_exists_exact_bound unfolding_env sigenv x s p) 
+                             var_name_list
+                end
               else
-                (* formula_list = [s$1_in_s & p{x->s$1} ; s$2_in_s & p{x-> s$2} ; ...] *) 
-                List.map (conj_exists_exact_bound unfolding_env sigenv x s p) 
-                  var_name_list
-            in
-            disjunction formula_list
-          else
-            (* not exact bound *)
-            let formula_list = 
-              if (is_primary sigenv s) then
-                (* formula_list = [s$1 & p{x-> s$1} ; s$2 & p{x->s$2} ; ...] *)
-                List.map (create_conjunction unfolding_env sigenv x s p) 
-                  var_name_list 
-              else
-                (* formula_list = [s$1 & s$1_in_s & p{x-> s$1} ; s$2 & s$2_in_s & p{x->s$2} 
+                (* not exact bound *)
+                if List.mem s primary_sigs
+                then
+                  (* formula_list = [s$1 & p{x-> s$1} ; s$2 & p{x->s$2} ; ...] *)
+                  List.map (create_conjunction unfolding_env sigenv x s p) 
+                           var_name_list 
+                else
+                  (* formula_list = [s$1 & s$1_in_s & p{x-> s$1} ; s$2 & s$2_in_s & p{x->s$2} 
                    ; ...] *)
-                List.map (conj_exists_notexact_bound unfolding_env sigenv x s p) 
-                  var_name_list
-            in
-            disjunction formula_list 
+                  List.map (conj_exists_notexact_bound unfolding_env sigenv x s p) 
+                           var_name_list
+          in
+          disjunction formula_list 
 
     (* (future) temporal connectives *)
     | Next2 p -> 
@@ -588,25 +630,30 @@ let compute_instances_constraints sigenv =
 
   (* map associating each primary signature to the list of its intances 
      (atoms) *) 
-  let atom_list_per_prim_sig = 
-    compute_atoms_per_primary_sig primary_sigs sigenv
+  let atom_list_per_sig = 
+    compute_atoms_per_sig sigenv.sigord sigenv.sigbounds
+                          sigenv.sigmult sigenv.lowerbounds sigenv.abstract_sigs
   in  
 
   let subs_included_in_super_sig s =
     (* s must be primary *)
     (* if the bound is exact then there is no constraint *)
     if (fst (NameMap.find s sigenv.sigbounds))
-    then
+    then 
       LTrue
-
     else
       let s_var = is_var sigenv s in
+
+      (* list of subsigs that are not static one sigs *)
       let sub_sorts = 
-        List.filter (fun x -> (is_father sigenv x s) && x <> Names.empty) siglist 
+        List.filter (fun x -> (is_father sigenv x s) && x <> Names.empty
+                              && (not (mult_is_one sigenv x) || is_var sigenv x)
+                    )
+                    siglist 
       in
       let insts_of_s = 
         try
-          NameMap.find s atom_list_per_prim_sig
+          NameMap.find s atom_list_per_sig
         with
             Not_found -> 
               failwith ("k2_to_ltl: subs_included_in_super_sig: cannot find instances \ 
