@@ -651,7 +651,6 @@ let compute_instances_constraints sigenv =
                     )
                     siglist 
       in
-      List.print BatString.print stdout sub_sorts;
       let insts_of_s = 
         try
           NameMap.find s atom_list_per_sig
