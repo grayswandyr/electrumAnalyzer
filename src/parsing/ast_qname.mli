@@ -37,7 +37,7 @@ val to_string : t -> string
 
 val to_document : t -> PPrint.document
 
-val add_pref : t -> t -> t
+val add_pref : Ast_ident.t option -> t -> t
 
 val local : Ast_ident.t -> t
 

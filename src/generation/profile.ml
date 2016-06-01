@@ -180,6 +180,11 @@ let print_signame_order sigord =
 let id_to_name id= Names.make (Ast.Ident.to_string id)
 let qn_to_name qname= Names.make (Ast_qname.to_string qname)
 
+(*id to name with path given *)
+let pathid_to_name path id= 
+	let qname=Ast_qname.make false path id
+	in qn_to_name qname
+
 
 (* from name back to qname *)
 let name_to_qn name= 

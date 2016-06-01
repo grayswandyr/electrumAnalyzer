@@ -49,17 +49,17 @@ let to_string { this; path; name } =
 
 let to_document qn = PPrint.string @@ to_string qn
 
-let add_pref (this_pref, path_pref, ident_pref) (this, path, name) =
-  if Ast_ident.to_string ident_pref = "" then
-    (this_pref , path_pref @ path, name)
-  else
-    (this_pref, path_pref @ [ ident_pref ] @ path, name)
+(*pref now of type ident option *)
+let add_pref pref (this, path, name) =
+  match pref with 
+  	|None -> (this, path, name)
+        |Some id -> (this, id::path, name)
 
 let add_pref pref qn =
-  if Ast_ident.to_string pref.name = "" then
-    make pref.this (pref.path @ qn.path) qn.name
-  else
-    make pref.this (pref.path @ [ pref.name ] @ qn.path) qn.name
+    match pref with 
+  	|None -> qn
+        |Some id -> {qn with path=id::qn.path}
+  
 
 (*function for local qname from ident*)
 let local idt=make false [] idt  

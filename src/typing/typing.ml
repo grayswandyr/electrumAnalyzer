@@ -255,13 +255,10 @@ let rec replace_iplist x value l =
 
 
 (* env1 + pref/newenv *)
+(* pref is now an ident option *)
 let env_concat_pref env1 pref newenv params=
   let open Ast_qname in
-  let newmap=
-    QNameMap.fold (fun name bt acc-> env_add 
-                                       (add_pref pref name) 
-                                       (bt_addpref_except bt pref params)
-                                       acc) newenv.env_map env1.env_map in
+ 
   let newsig=
     sig_union env1.sign_ord (sig_addpref pref newenv.sign_ord) in
   let newpred=
@@ -281,9 +278,18 @@ let env_concat_pref env1 pref newenv params=
     (* predicates *)
     @
     (QNameMap.fold (fun qn _ acc->qn::acc) newenv.predmap [])
+    (* Relations *)
+    @
+    (QNameMap.fold (fun qn _ acc ->qn::acc) newenv.env_map [])
+    
   in
   let newnames=
     List.map (add_pref pref) locnames in
+  let newmap=
+    QNameMap.fold (fun name bt acc-> env_add 
+                                       (add_pref pref name) 
+                                       (bt_addpref_except bt pref params)
+                                       acc) newenv.env_map env1.env_map in
   let newpredicates=
     (* first the images *)
     let newimg=
@@ -1059,12 +1065,12 @@ and process_file par_cmd_list args=
 and process_file_pass blocs acc_env=let open Ast_par in match blocs with  
     |[] -> return acc_env
     |(Imp (mod_name, params, alias_opt))::q ->
-        let alias=(match alias_opt with
-              |None-> Ast.Qname.local (Ast_ident.make "")
-              |Some iden -> Ast.Qname.local iden)
-        in process_import mod_name params
+       (* let alias=(match alias_opt with
+              |None-> (Ast_ident.make "")
+              |Some iden -> Ast.Qname.local iden) in*)
+         process_import mod_name params
         (* Careful, convention different from Alloy *)
-        >>= fun newenv-> process_file_pass q (env_concat_pref acc_env alias newenv params)
+        >>= fun newenv-> process_file_pass q (env_concat_pref acc_env alias_opt newenv params)
     |(Parag p)::q -> (match p with 
           |Sig s -> 
               let newsig= (*new signatures environment containing names of s and their extensions *)
