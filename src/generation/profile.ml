@@ -44,6 +44,8 @@ module Range = struct
 
   let to_string set =
     BatIO.to_string print set
+  let list_to_string l =
+    List.fold_left (fun acc r ->acc^(to_string r)) "" l
 end
 
 type range = Range.t

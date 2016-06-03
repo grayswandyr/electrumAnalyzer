@@ -707,6 +707,10 @@ and is_in_join gen_env xs t1 t2 =
        (K1_pretty.string_of_term t1)
        (K1_pretty.string_of_term t2)
        (ListX.to_string (Tuple2.print String.print String.print) gen_env.bindings);
+  Cfg.print_debug
+  @@ Printf.sprintf "is_in_join profiles: %s and %s\n%!"
+       (Union.to_string t1.profile)
+       (Union.to_string t2.profile);
   let open List in
   let lg_xs = length xs in
   let types1 = Profile.Union.to_list t1.profile in
@@ -719,13 +723,13 @@ and is_in_join gen_env xs t1 t2 =
     let lg_type1 = length type1 in
     let last_type1 = last type1 in
     let first_type2 = List.hd type2 in
-    (* Cfg.print_debug *)
-    (* @@ Printf.sprintf "is_in_join.select: (%s) (%s): joinable?
-       %B\n%!" *)
-    (*      (Profile.Range.to_string type1) *)
-    (*      (Profile.Range.to_string type2) *)
-    (*      (Profile.sort_inter sigenv.sigord last_type1 first_type2) *)
-    (* ; *)
+     Cfg.print_debug 
+     @@ Printf.sprintf "is_in_join.select: (%s) (%s): joinable?
+       %B\n%!" 
+        (Profile.Range.to_string type1) 
+          (Profile.Range.to_string type2) 
+         (Profile.sort_inter gen_env.sigenv.sigord last_type1 first_type2) 
+    ; 
     if Profile.sort_inter gen_env.sigenv.sigord last_type1 first_type2
     && lg_type1 + length type2 = lg_xs + 2 then
       let ys, zs = split_at (lg_type1 - 1) xs in
@@ -736,6 +740,10 @@ and is_in_join gen_env xs t1 t2 =
       None
   in
   (* compute the domain joins on which we will quantify *)
+  Cfg.print_debug
+  @@ Printf.sprintf "is_in_join: domains %s and %s" 
+  (Range.list_to_string types1) 
+  (Range.list_to_string types2);
   let domains =
     cartesian_product types1 types2 |> filter_map select |> unique_cmp
   in

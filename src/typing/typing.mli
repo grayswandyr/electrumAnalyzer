@@ -62,7 +62,7 @@ type envir_sig = {
   last_try: bool;
 }
 
-val rep_expr: Ast_qname.t -> Ast_expr.prim_expr -> Ast_expr.expr -> Ast_expr.expr
+val rep_expr_primexpr: Ast_qname.t -> Ast_expr.prim_expr -> Ast_expr.expr -> Ast_expr.expr
 
 val empty_envir: envir_sig
 
