@@ -133,12 +133,12 @@ and
                 var_atoms = NameSet.empty ;
               }
   | LAtom n ->  
-      { formula = string n ;
+     { formula = string (K1_pretty.format_var_name n) ;
         const_atoms = NameSet.empty ;
-        var_atoms = NameSet.singleton n ;
+        var_atoms = NameSet.singleton (K1_pretty.format_var_name n) ;
       }
-  | LConstAtom n -> { formula = string n ;
-                      const_atoms = NameSet.singleton n ;
+  | LConstAtom n -> { formula = string (K1_pretty.format_var_name n) ;
+                      const_atoms = NameSet.singleton (K1_pretty.format_var_name n) ;
                       var_atoms = NameSet.empty ;
                     }
 

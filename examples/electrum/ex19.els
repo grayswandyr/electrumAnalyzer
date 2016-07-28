@@ -7,7 +7,7 @@ sig C {
 }
 
 fact {
-      all c : C |c.(A <: r) in  A
+      all c : C |c.(r :> A) in  A
 }
 
 pred p { univ in univ }

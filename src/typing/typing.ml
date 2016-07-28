@@ -155,71 +155,90 @@ let rep_bt x value bt = match bt with
             BoundType.add (List.map rep_base l, b) acc) r BoundType.empty)
 
 (* in an expression, but here value is a prim_expr *)
-let rec rep_expr x valprim (expression:expr)=
-  let rep=rep_expr x valprim in 
+
+
+let rec rep_expr x value (expression:expr)=
+  let rep=rep_expr x value in 
   let newprim = match expression.expr with
     | EThis -> EThis
-    | EConst x -> EConst x
-    | ELet (deflist, bloc) -> ELet (List.map (rep_def x valprim) deflist, rep_block x valprim bloc)
-    | EQuant (quant, decl_list, bloc ) -> EQuant (quant, List.map (rep_decl x valprim) decl_list, rep_block x valprim bloc)
+    | EConst c -> EConst c
+    | ELet (deflist, bloc) -> ELet (List.map (rep_def x value) deflist, rep_block x value bloc)
+    | EQuant (quant, decl_list, bloc ) -> EQuant (quant, List.map (rep_decl x value) decl_list, rep_block x value bloc)
     | EUnary (op, exp) -> EUnary (op, rep exp)
     | EBinary (e1,op,e2) -> EBinary (rep e1, op, rep e2)
     | ECart (e1,m1,m2,e2) -> ECart (rep e1, m1, m2 , rep e2)
     | EComp (e1,op,e2) -> EComp (rep e1, op, rep e2)
     | EIte (e1,e2,e3) -> EIte (rep e1, rep e2, rep e3)
-    | EApp (e, el) -> EApp (rep e, rep_block x valprim el)
+    | EApp (e, el) -> EApp (rep e, rep_block x value el)
+    | EAtName id -> EAtName id   (*this is called before typing, so no need to replace in the type *)
+    | EQualName a ->  if x=a then EQualName value else EQualName a
+    | EBlock bloc -> EBlock (rep_block x value bloc)
+    | ECompr (decl_list, bloc) -> ECompr (List.map (rep_decl x value) decl_list, rep_block x value bloc)
+     in let newtyp = match expression.typ with
+       |None -> None
+       |Some bt -> Some (rep_bt x value bt) 
+  in {expression with expr= newprim; typ=newtyp;}
+
+and rep_expr_primexpr x valprim (expression:expr)=
+  let rep=rep_expr_primexpr x valprim in 
+  let newprim = match expression.expr with
+    | EThis -> EThis
+    | EConst c -> EConst c
+    | ELet (deflist, bloc) -> ELet (List.map (rep_def_prim x valprim) deflist, rep_block_prim x valprim bloc)
+    | EQuant (quant, decl_list, bloc ) -> EQuant (quant, List.map (rep_decl_prim x valprim) decl_list, rep_block_prim x valprim bloc)
+    | EUnary (op, exp) -> EUnary (op, rep exp)
+    | EBinary (e1,op,e2) -> EBinary (rep e1, op, rep e2)
+    | ECart (e1,m1,m2,e2) -> ECart (rep e1, m1, m2 , rep e2)
+    | EComp (e1,op,e2) -> EComp (rep e1, op, rep e2)
+    | EIte (e1,e2,e3) -> EIte (rep e1, rep e2, rep e3)
+    | EApp (e, el) -> EApp (rep e, rep_block_prim x valprim el)
     | EAtName id -> EAtName id   (*this is called before typing, so no need to replace in the type *)
     | EQualName a ->  if x=a then valprim else EQualName a
-    | EBlock bloc -> EBlock (rep_block x valprim bloc)
-    | ECompr (decl_list, bloc) -> ECompr (List.map (rep_decl x valprim) decl_list, rep_block x valprim bloc)
-    (* in let newtyp = match expression.typ with
-       |None -> None
-       |Some bt -> Some (rep_bt x value bt) *)
+    | EBlock bloc -> EBlock (rep_block_prim x valprim bloc)
+    | ECompr (decl_list, bloc) -> ECompr (List.map (rep_decl_prim x valprim) decl_list, rep_block_prim x valprim bloc)
     (* we keep the previous typ , it should not change *)
   in {expression with expr= newprim;}
 
 (* in a block *)
-and rep_block x valprim bloc= List.map (rep_expr x valprim) bloc
+and rep_block x value bloc= List.map (rep_expr x value) bloc
+and rep_block_prim x valprim bloc= List.map (rep_expr_primexpr x valprim) bloc
 
 (* in a declaration *)
-and rep_decl x valprim dec= {dec with range=rep_expr x valprim dec.range}
-
+and rep_decl x value dec= {dec with range=rep_expr x value dec.range}
+and rep_decl_prim x valprim dec= {dec with range=rep_expr_primexpr x valprim dec.range}
 (* in a definition *)
-and rep_def x valprim def={def with expr=rep_expr x valprim def.expr}
+and rep_def x value def={def with expr=rep_expr x value def.expr}
+and rep_def_prim x valprim def={def with expr=rep_expr_primexpr x valprim def.expr}
 
 (* in a signature declaration *)
 and rep_sig x value s=let open Ast_par in
-  let valprim=EQualName value in
   let newext= match s.extends with
     |Some (Extends name) -> Some (Extends (repl x value name))
     |Some (In namelist) -> Some (In (List.map (repl x value) namelist))
     |None -> None
-  in let newfields=List.map (rep_decl x valprim) s.fields
+  in let newfields=List.map (rep_decl x value) s.fields
   in let newfact= match s. fact with
-       |Some b -> Some (rep_block x valprim b)
+       |Some b -> Some (rep_block x value b)
        |None -> None
   in {s with extends=newext; fields=newfields; fact=newfact}
 
 (* in a fact *)
 and rep_fact x value (f:Ast_par.fact)=
-  let valprim=  EQualName value in
-  {f with body=rep_block x valprim f.body}
+  {f with body=rep_block x value f.body}
 
 (*in a predicate *)                                       
 and rep_pred x value (p:Ast_par.pred)= 
-  let valprim=  EQualName value in
-  let newpar= List.map (rep_decl x valprim) p.params in
-  {p with params=newpar; body= rep_block x valprim p.body}
+  let newpar= List.map (rep_decl x value) p.params in
+  {p with params=newpar; body= rep_block x value p.body}
 
 (* in a function *)  
 and rep_func x value (f:Ast_par.func) = 
-  let valprim=EQualName value in
-  let newpar= List.map (rep_decl x valprim) f.params in
-  let newret= rep_expr x valprim f.returns in
-  let newbody= rep_expr x valprim f.body in
+  let newpar= List.map (rep_decl x value) f.params in
+  let newret= rep_expr x value f.returns in
+  let newbody= rep_expr x value f.body in
   {f with params=newpar; returns=newret; body=newbody}
 
-and rep_assert x value (a:Ast_par.assertion)= {a with body=rep_block x (EQualName value) a.body}
+and rep_assert x value (a:Ast_par.assertion)= {a with body=rep_block x value a.body}
 
 (* in a paragraph *)
 and rep_par x value par= let open Ast_par in
@@ -239,12 +258,11 @@ and rep_cmd x value cmd= let open Ast_ctrl in
         let repl_scopes scopelist=
           List.map (fun (b,i,qn)->(b,i,repl x value qn)) scopelist
         in
-        let valprim = EQualName value in
         let newscope=match optscope with
           |None -> None
           |Some (ForBut (i,scopelist))-> Some (ForBut (i,repl_scopes scopelist))    
           |Some (ForTypes scopelist) -> Some (ForTypes (repl_scopes scopelist))   
-        in BlockCmd(rep_block x valprim bloc, cmd_type, newscope, id_opt)
+        in BlockCmd(rep_block x value bloc, cmd_type, newscope, id_opt)
 
 (* in a imp_par list *)
 let rec replace_iplist x value l = 
@@ -255,13 +273,10 @@ let rec replace_iplist x value l =
 
 
 (* env1 + pref/newenv *)
+(* pref is now an ident option *)
 let env_concat_pref env1 pref newenv params=
   let open Ast_qname in
-  let newmap=
-    QNameMap.fold (fun name bt acc-> env_add 
-                                       (add_pref pref name) 
-                                       (bt_addpref_except bt pref params)
-                                       acc) newenv.env_map env1.env_map in
+ 
   let newsig=
     sig_union env1.sign_ord (sig_addpref pref newenv.sign_ord) in
   let newpred=
@@ -281,9 +296,18 @@ let env_concat_pref env1 pref newenv params=
     (* predicates *)
     @
     (QNameMap.fold (fun qn _ acc->qn::acc) newenv.predmap [])
+    (* Relations *)
+    @
+    (QNameMap.fold (fun qn _ acc ->qn::acc) newenv.env_map [])
+    
   in
   let newnames=
     List.map (add_pref pref) locnames in
+  let newmap=
+    QNameMap.fold (fun name bt acc-> env_add 
+                                       (add_pref pref name) 
+                                       (bt_addpref_except bt pref params)
+                                       acc) newenv.env_map env1.env_map in
   let newpredicates=
     (* first the images *)
     let newimg=
@@ -1059,12 +1083,12 @@ and process_file par_cmd_list args=
 and process_file_pass blocs acc_env=let open Ast_par in match blocs with  
     |[] -> return acc_env
     |(Imp (mod_name, params, alias_opt))::q ->
-        let alias=(match alias_opt with
-              |None-> Ast.Qname.local (Ast_ident.make "")
-              |Some iden -> Ast.Qname.local iden)
-        in process_import mod_name params
+       (* let alias=(match alias_opt with
+              |None-> (Ast_ident.make "")
+              |Some iden -> Ast.Qname.local iden) in*)
+         process_import mod_name params
         (* Careful, convention different from Alloy *)
-        >>= fun newenv-> process_file_pass q (env_concat_pref acc_env alias newenv params)
+        >>= fun newenv-> process_file_pass q (env_concat_pref acc_env alias_opt newenv params)
     |(Parag p)::q -> (match p with 
           |Sig s -> 
               let newsig= (*new signatures environment containing names of s and their extensions *)
@@ -1156,12 +1180,14 @@ and process_file_pass blocs acc_env=let open Ast_par in match blocs with
                                                  env_f.sig_list;}
 
           | Enum e -> (* (X,[A,B,C]) means "abstract sig X { } one sig A, B, C extends X { }"*) 
+              let ename=Ast.Qname.local e.name in
+              let addmainsig=addsig ename (QNameSet.empty, false) acc_env.sign_ord in
               let newsig=addsiglist 
                            (List.map Ast.Qname.local e.cases)
-                           [Ast.Qname.local e.name]
+                           [ename]
                            false (* no is_variable field, interpreted as static by default *)
-                           acc_env.sign_ord
-
+                           addmainsig
+		
               in process_file_pass q {acc_env 
                                       with sign_ord=newsig;
                                            sig_list=acc_env.sig_list@(enum_to_siglist e)}

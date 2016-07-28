@@ -44,6 +44,8 @@ module Range = struct
 
   let to_string set =
     BatIO.to_string print set
+  let list_to_string l =
+    List.fold_left (fun acc r ->acc^(to_string r)) "" l
 end
 
 type range = Range.t
@@ -89,6 +91,8 @@ type sig_env =
     sigbounds : typescopes ;
     sigmult : signame_mult ;
     abstract_sigs : name list ;
+    lowerbounds : (name list) NameMap.t;
+    instances_map : (name list) NameMap.t;
   }
 
 let mult_is_one sigenv s =
@@ -177,6 +181,11 @@ let print_signame_order sigord =
 (* from Ident QualName to Name *)
 let id_to_name id= Names.make (Ast.Ident.to_string id)
 let qn_to_name qname= Names.make (Ast_qname.to_string qname)
+
+(*id to name with path given *)
+let pathid_to_name path id= 
+	let qname=Ast_qname.make false path id
+	in qn_to_name qname
 
 
 (* from name back to qname *)
@@ -416,6 +425,32 @@ let direct_super_sig sigenv s =
   with
       Not_found -> failwith ("direct_super_sig: Sort " ^ s ^ " has no direct super sig.\n")
 
+                            (* find the direct super signature of a signature *)
+let direct_super_sig2 sigord s =
+  let (greater_sigs, _ ) = 
+    try NameMap.find s (fst sigord)
+    with Not_found -> failwith ("direct_super_sig2: Sort " ^ s ^ " not found.\n") 
+  in
+  let set_father = NameSet.filter (is_father2 sigord s) greater_sigs in
+  try NameSet.choose set_father
+  with
+      Not_found -> failwith ("direct_super_sig2: Sort " ^ s ^ " has no direct super sig.\n")
+
+(* returns true iff all its parent signatures are parents through extends, and not through in *)
+let rec no_parent_through_in sigord s =
+  if (is_primary2 sigord s) || (s = Names.univ)
+  then
+    true
+  else
+    (* if s is not present is some equivalence class, i.e., s does not extends
+       some signature, then return false *)
+    if not (EqClasses.exists (fun set -> NameSet.mem s set) (snd sigord))
+    then
+      false
+    else
+      let father = direct_super_sig2 sigord s in 
+      no_parent_through_in sigord father
+                            
 (* add static hulls to primary var sigs *)
 (* let bound_hulls sigenv= *)
 (*    let newbounds= *)
@@ -577,6 +612,9 @@ let print_sigmult sigmult =
                                 )
     stdout sigmult
 
+let print_lowerbounds lb =
+  NameMap.print BatString.print (BatList.print BatString.print)
+                stdout lb
 
 (* returns a map associating each signature name with its multiplicity if it has some.
    The first parameter is of type Typing.envir_sig. 
@@ -596,28 +634,91 @@ let sigmult_from_env env sigmap =
   in NameMap.mapi compute_mult sigmap
 
 
+(* true iff the sig is abstract.
+  The first parameter is of type Typing.envir_sig.
+  The second parameter is of type name (string).
+ *)                  
+let is_abstract env signame =
+  let open Ast_par in
+  let open Typing in
+
+  if signame = Names.univ || signame = Names.empty then false
+  else
+    try 
+      let (_, sign)= 
+        List.find (fun (qn_list,s) ->
+                   List.exists (fun qn->qn_to_name qn=signame) qn_list)
+                  env.sig_list
+      in sign.is_abstract
+    with Not_found -> failwith ("Profile.abstract_sigs_from_env: signature " 
+                                ^ signame ^ " not found.")                    
+                               
 (* returns the list of the names of all the abstract signatures.
    The first parameter is of type Typing.envir_sig. 
    The second parameter is a list of (all) signature names.
 *)
 let abstract_sigs_from_env env signame_list =
-  let open Ast_par in
-  let open Typing in
-  let is_abstract signame =
-    if signame = Names.univ || signame = Names.empty then false
+
+  List.filter (is_abstract env) signame_list
+
+(* This function creates atoms fo the signature s and its bound k. *)
+let create_atoms k s =
+  let rec create_aux s k l = 
+    if k = 0 then
+      l
     else
-      try 
-        let (_, sign)= 
-          List.find (fun (qn_list,s) ->
-                List.exists (fun qn->qn_to_name qn=signame) qn_list)
-            env.sig_list
-        in sign.is_abstract
-      with Not_found -> failwith ("Profile.abstract_sigs_from_env: signature " 
-                                  ^ signame ^ " not found.")                    
-  in
-  List.filter is_abstract signame_list
+      create_aux s (k-1) ((s ^ "$" ^ (string_of_int k)) :: l)
+  in  match s with 
+    | name -> create_aux name k []
 
+                         
+(* returns the set of instances that a signature must have according to
+the electrum model (lower bound in the sense of kodkod)
+*)
+let rec min_instances_set sigord sigmult s =
+  (* if there is some parent through in then we do not consider the minimum
+      instances set (return empty list) *)
+  if not (no_parent_through_in sigord s) then []
+  else
+    let siglist = List.of_enum (NameMap.keys (fst sigord)) in
+    let sons_for_extends = 
+      List.filter (fun son -> is_father_for_extends sigord son s) siglist 
+    in
+    (* all the instances that the sons must have *)
+    let sons_instances =
+      List.fold_right List.append
+                      (List.map (min_instances_set sigord sigmult)
+                                sons_for_extends)
+                      []
+    in
+    (* if there is no insance that the sons must have and the mult is one, 
+     then we create an instance
+     *)
+    if is_empty sons_instances
+    then
+      begin
+        if (mult_is_one2 sigmult s) && not (is_var2 sigord s)
+        then
+          [ s ^ "$$" ]
+        else
+          []
+      end
+    else
+      (* if some of the sons must have instances, we consider these instances *)
+      sons_instances   
 
+(* returns a map associating each signature with the minimal set of
+instances it must have according to the one sigs in the electrum
+models 
+*)    
+let min_instances_map_from_env sigord sigmult =
+  let siglist = List.of_enum (NameMap.keys (fst sigord)) in
+  List.fold_right (fun sname map_acc->
+                   NameMap.add sname (min_instances_set sigord sigmult sname) map_acc
+                  )
+                  siglist
+                  NameMap.empty
+                  
 (* returns the minimum number of instances that a signature must have according
    to the electrum model (the multilicity of sigs and the sigs hierarchy). 
 *)
@@ -649,6 +750,7 @@ let rec min_bound sigord sigmult abstr_sigs s =
   in
   max min_due_to_mult (max min1  min2)
 
+      
 (* returns the maximum number of instances that a signature can have according 
    to the elctrum model (the multilicity of sigs and the sigs hierarchy). 
    returns -1 if no maximum number is forced by the model.
@@ -691,3 +793,91 @@ let rec max_bound sigord sigmult abstr_sigs s =
            sons_for_extends)
         0                  
 
+(* This function computes the list of instances for a signature.
+ *)
+let rec compute_atoms_for_sig sigord sigbounds sigmult lowerbounds abstr_sigs s =
+  let min_instances =
+    try
+      NameMap.find s lowerbounds
+    with
+    | Not_found -> failwith ("profile.compute_atoms_per_sig: cannot find \ 
+                              lower bound of sig " ^ s)
+  in
+  if (mult_is_one2 sigmult s) && not(is_var2 sigord s) && (no_parent_through_in sigord s)
+  then
+    min_instances
+  else
+    if is_primary2 sigord s
+    then
+      begin
+        let bnd_s =
+          try
+            snd (NameMap.find s sigbounds)
+          with
+          | Not_found -> failwith ("profile.compute_atoms_for_sig: \ 
+                                    cannot find bound of sig " ^ s)
+        in
+        let nb_instances_left = bnd_s - (List.length min_instances) in
+        if nb_instances_left < 0
+        then
+          begin
+            print_endline ("WARNING: bound for signature " ^ s ^ "is in \ 
+                           contradiction with \ one sigs extending it")
+          end
+        ;
+          List.append min_instances (create_atoms nb_instances_left s)
+      end
+    else
+      (* if the signature is abstract and static  and all its children are 
+         static one sigs, then return the set of the instances of the children
+       *)
+      if (List.mem s abstr_sigs) && not (is_var2 sigord s)
+      then
+        begin
+          let siglist = List.of_enum (NameMap.keys (fst sigord)) in
+          let sons_for_extends = 
+            List.filter (fun son -> is_father_for_extends sigord son s) siglist 
+          in
+          if List.for_all (fun son ->
+                           mult_is_one2 sigmult son
+                           && not (is_var2 sigord son)
+                          )
+                          sons_for_extends
+          then
+            List.fold_left
+              (fun list_acc son -> try
+                                  List.append list_acc (NameMap.find son lowerbounds)
+                                with
+                              | Not_found ->
+                                 failwith ("profile.compute_atoms_for_sig: \ 
+                                            cannot find lower bounds for sig "
+                                           ^ son)
+              )
+              []
+              sons_for_extends
+          else
+            (*general case: return the instances of the primary sig of s *)
+            let prim_sig_of_s = primary_sig_of2 sigord s in
+            compute_atoms_for_sig sigord sigbounds sigmult
+                                  lowerbounds abstr_sigs prim_sig_of_s
+        end
+      else
+        (*general case: return the instances of the primary sig of s *)
+        let prim_sig_of_s = primary_sig_of2 sigord s in
+        compute_atoms_for_sig sigord sigbounds sigmult
+                              lowerbounds abstr_sigs prim_sig_of_s
+                  
+(* This function computes the map that associates each signature with
+   the list of its atoms.
+*)
+let compute_atoms_per_sig  sigord sigbounds sigmult lowerbounds abstr_sigs =
+  (* sig_list is the list of all signatures except univ and none*)
+  let sig_list = List.of_enum (NameMap.keys (fst sigord))
+                 |> List.filter (fun s -> (s != Names.univ) && s != Names.empty)
+  in
+  let  fun_add m s =
+    NameMap.add s (compute_atoms_for_sig sigord sigbounds sigmult lowerbounds abstr_sigs s) m
+  in 
+  List.fold_left fun_add NameMap.empty sig_list
+
+  
