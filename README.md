@@ -26,7 +26,7 @@ instructions.
 
 ## Copyright and license
 
-(C) 2014-2015 Onera
+(C) 2014-2016 Onera
 (C) 2015 IRIT
 
 Electrum Analyzer is distributed under the terms of the GNU General Public
