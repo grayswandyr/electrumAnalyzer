@@ -1,5 +1,5 @@
 (*****************************************************************************
- * Time-stamp: <2016-03-16 CET 17:06:49 David Chemouil>
+ * Time-stamp: <2016-07-28 CEST 16:47:48 David Chemouil>
  *
  * Electrum Analyzer 
  * Copyright (C) 2014-2015 Onera; (C) 2015 IRIT
@@ -222,7 +222,7 @@ let main_info =
               `P "Report issues at \
                   <https://forge.onera.fr/projects/electrum/issues/new>.";
               `S "COPYRIGHT";
-              `P "Electrum Analyzer (C) 2014-2015 Onera, (C) 2015 IRIT";
+              `P "Electrum Analyzer (C) 2014-2016 Onera, (C) 2015 IRIT";
               `P "The Electrum Analyzer is free software: you can redistribute \
                   it and/or modify it under the terms of the GNU General \
                   Public License as published by the Free Software Foundation, \
