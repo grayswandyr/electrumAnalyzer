@@ -1,6 +1,6 @@
 opam-version: "1.2"
 name: "electrumAnalyzer"
-version: "0.3.5-rc.1"
+version: "0.3.5"
 maintainer: "david.chemouil+electrum@onera.fr"
 authors: [ "David Chemouil"
            "Julien Brunel"

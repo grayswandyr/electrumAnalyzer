@@ -1,4 +1,4 @@
-Version: 0.3.5-rc.1
+Version: 0.3.5
 
 OASISFormat: 0.4 
 Name: electrumAnalyzer
@@ -11,7 +11,7 @@ Maintainers:
   david.chemouil+electrum@onera.fr,
   julien.brunel+electrum@onera.fr
 Copyrights: 
-  (C) 2014-2015 Onera
+  (C) 2014-2016 Onera
   (C) 2015 IRIT
 License: GPL-3+
 LicenseFile: COPYING.txt
