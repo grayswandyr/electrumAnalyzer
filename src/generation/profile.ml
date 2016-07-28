@@ -44,6 +44,8 @@ module Range = struct
 
   let to_string set =
     BatIO.to_string print set
+  let list_to_string l =
+    List.fold_left (fun acc r ->acc^(to_string r)) "" l
 end
 
 type range = Range.t
@@ -179,6 +181,11 @@ let print_signame_order sigord =
 (* from Ident QualName to Name *)
 let id_to_name id= Names.make (Ast.Ident.to_string id)
 let qn_to_name qname= Names.make (Ast_qname.to_string qname)
+
+(*id to name with path given *)
+let pathid_to_name path id= 
+	let qname=Ast_qname.make false path id
+	in qn_to_name qname
 
 
 (* from name back to qname *)

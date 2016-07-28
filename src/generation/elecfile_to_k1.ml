@@ -173,7 +173,7 @@ let globalexpr expression signame envalias=
                  expr=EThis;
                  typ= Some bt_sig;} in
     let newr=EBinary (ethis, BDot, rvar)
-    in rep_expr r_qname newr expr
+    in rep_expr_primexpr r_qname newr expr
   in
   NameSet.fold (fun r accexpr -> replfield accexpr r) fieldset expression
 

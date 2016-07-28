@@ -187,3 +187,8 @@ let string_of_bindings bs = Util.PPrintX.to_string @@ document_of_bindings bs
 let simple_string_of_term t =
   let r = Str.regexp "\\([^A-Za-z0-9]\\)" in
   Str.global_replace r "_" (string_of_term t)
+
+let format_var_name s =
+  let r = Str.regexp "/" in
+  Str.global_replace r "_" s
+                     
